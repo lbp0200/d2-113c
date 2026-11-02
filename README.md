@@ -23,8 +23,9 @@ docs/      ← changelog（自动生成）+ 设计文档
 # 第一件事：确认基线能被无损读回（当前 91 张表全绿）
 python3 -m tools.build --check
 
-# P1 只读分析：地狱免疫墙报告 → docs/p1-immunity.md
-python3 -m tools.p1_immunity
+# P1 只读分析（不改任何数据）
+python3 -m tools.p1_immunity     # 地狱免疫墙 → docs/p1-immunity.md
+python3 -m tools.p1_skills       # 技能本体伤害曲线 → docs/p1-skills.md
 
 # 构建（产出 mod/ + docs/changelog.md）
 python3 -m tools.build
