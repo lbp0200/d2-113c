@@ -220,6 +220,7 @@ VirtualBox Windows（只做三件事）
 
 考察对象：某 "1.12a 数字收藏版 + 官方 1.13c 升级 + 插件叠层" 的 DIY 整合包
 （PlugY 14.03 / Basemod DLL 补丁 / D2GL 渲染器 / SGD2FreeRes 高分屏 / 大背包大箱子大盒子 / 仿 D2R UI）。
+**原始说明文档已存档：[docs/pack-整合版说明.md](pack-整合版说明.md)**（原文逐字 + 我们的批注）
 
 **定性：它是别人的"重度 MOB"，不是 1.13c 原版。**
 
