@@ -1,0 +1,4 @@
+*.bin
+*.d2s
+__pycache__/
+.venv/
