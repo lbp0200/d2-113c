@@ -48,6 +48,13 @@ class TestOps(Base):
         self.assertIn(b"skeleton1\t110\t21", out)
         self.assertIn(b"fallen\t130\t61", out)
 
+    def test_mul_ndigits_keeps_integers(self):
+        # HP 这类整数列：863 * 1.35 = 1165.05，D2 解析不了浮点
+        patch("monstats.txt").all().mul("MinHP", 1.35, ndigits=0)
+        out = self.ctx.files["monstats.txt"].dumps()
+        self.assertIn(b"skeleton1\t110\t14\r\n", out)   # 10*1.35=13.5 -> 14
+        self.assertNotIn(b".", out)
+
     def test_selector_no_match_warns(self):
         patch("monstats.txt", why="x").where("MinHP", gt(9999)).set("MinHP", 1)
         self.assertTrue(any("没匹配到任何行" in w for w in self.ctx.warnings))

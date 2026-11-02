@@ -369,15 +369,19 @@ class Selection:
         return self
 
     @_guarded
-    def add(self, col: str, delta: float):
+    def add(self, col: str, delta: float, *, ndigits: int | None = None):
         ci = self.tf.need(col)
-        self._each_numeric(ci, col, lambda x: x + delta)
+        fn = (lambda x: x + delta) if ndigits is None else (lambda x: round(x + delta, ndigits))
+        self._each_numeric(ci, col, fn)
         return self
 
     @_guarded
-    def mul(self, col: str, factor: float):
+    def mul(self, col: str, factor: float, *, ndigits: int | None = None):
+        """倍乘。整数表（HP、伤害、等级…）务必传 `ndigits=0`，
+        否则会写出 `1165.05` 这种 D2 解析不了的浮点值。"""
         ci = self.tf.need(col)
-        self._each_numeric(ci, col, lambda x: x * factor)
+        fn = (lambda x: x * factor) if ndigits is None else (lambda x: round(x * factor, ndigits))
+        self._each_numeric(ci, col, fn)
         return self
 
     @_guarded
