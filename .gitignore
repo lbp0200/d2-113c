@@ -1,4 +1,6 @@
 *.bin
 *.d2s
+d2s/
 __pycache__/
 .venv/
+mod/
