@@ -1,5 +1,9 @@
 # P3 · 改动设计（从四份报告收敛）
 
+> **⚠ 目标已升级**：本文写于"轻度修补"阶段，A/B/C 清单仍是具体改动的来源，
+> 但**目标定位、验收标准、负面清单已由 [design-goal.md](design-goal.md) 取代**（v2）。
+> 读本文时请先看 design-goal.md。
+
 > 输入：[p1-immunity.md](p1-immunity.md) · [p1-skills.md](p1-skills.md) ·
 > [p1-merc.md](p1-merc.md) · [notes-runes.md](notes-runes.md)
 > 约束：**轻度修补 + 单机 only**（见 PLAN.md §7）。本文只做"改什么、为什么、怎么验证"。
