@@ -29,14 +29,15 @@ ELEMS = {
     "魔法": "ResMa(H)",
 }
 
-# 破免疫的难度分档：抗性 R 要降到 100 以下，需要 -res >= R-100；
-# 对免疫怪 -res 只按 1/5 生效，所以实际需要 5*(R-100)。
-TIERS = [
-    (1000, ">=1000 设计上绝对免疫"),
-    (200, ">=200 实际不可破"),
-    (121, "121~199 需多来源叠加"),
-    (101, "101~120 需无限/高等降抗"),
-]
+# 抗性 R 要降到 100 以下，需要 -res >= R-100；而对免疫怪 -res 只按 1/5 生效，
+# 所以实际需要 5*(R-100) 点降抗。这才是「能不能打」的真正判据。
+# 分档按「需要多少点降抗」：50 点 = 单靠信念/无限；100 点 = 信念+降抗诅咒；200 点 = 叠满装备也很勉强。
+REQ_TIERS = [(0, "0（本来不免疫）"), (50, "1~50"), (100, "51~100"), (200, "101~200"), (10**9, ">200")]
+
+
+def req_res(v: float) -> float:
+    """把抗性 R 折算成「需要多少点降抗才能破」。"""
+    return max(0.0, 5 * (v - 100))
 
 
 def load(ctx: Ctx):
@@ -91,10 +92,11 @@ def areas(lv: d2txt.TxtFile) -> list[tuple[str, str, str, list[str]]]:
     return out
 
 
-def build_report(ctx: Ctx, act_filter: str | None) -> str:
+def build_report(ctx: Ctx, act_filter: str | None, budget: float = 100.0) -> str:
     ms, lv = load(ctx)
     res = monster_resists(ms)
     area_list = areas(lv)
+    threshold = 100 + budget / 5
 
     L: list[str] = []
     add = L.append
@@ -121,29 +123,34 @@ def build_report(ctx: Ctx, act_filter: str | None) -> str:
     del L[-1]
     add("")
 
+    add("### 可破性（关键：免疫 ≠ 无解）")
+    add("")
+    add(f"假设你能凑到 **{budget}** 点降抗（信念/无限 + 降抗诅咒 + 装备），")
+    add("对免疫怪按 1/5 生效 → 实际可破上限 = **抗性 " + f"{100 + budget / 5:.0f}" + "**。")
+    add("超过这条线的怪，免疫数量再多也不是「难」，而是「无解」。")
+    add("")
+    add("| 元素 | 免疫(>=100) | 无解(>阈值) | 最高抗性 |")
+    add("|---|---:|---:|---:|")
+    for e in ELEMS:
+        vals = [r[e] for r in res.values()]
+        imm = sum(1 for v in vals if v >= 100)
+        dead = sum(1 for v in vals if v > threshold)
+        add(f"| {e} | {imm} | **{dead}** | {max(vals):.0f} |")
+    add("")
+
     # ------------------------------------------------------------------ 抗性分布
     add("## 抗性值分布")
     add("")
     add("抗性 R 降到 100 以下需要 `-res >= R-100`；对免疫怪降抗只按 1/5 生效，")
     add("所以真正需要的是 `5*(R-100)` 点降抗。这就是「某些免疫打不穿」的数学原因。")
     add("")
-    add("| 档位 | 火 | 冰 | 电 | 毒 | 物理 | 魔法 |")
+    add("| 需要的降抗量 | 火 | 冰 | 电 | 毒 | 物理 | 魔法 |")
     add("|---|---:|---:|---:|---:|---:|---:|")
-
-    def tier_of(v: float) -> str:
-        for lim, label in TIERS:
-            if v >= lim:
-                return label
-        return ""
-
-    for lim, label in TIERS:
+    for i, (lo, label) in enumerate(REQ_TIERS):
+        hi = REQ_TIERS[i + 1][0] if i + 1 < len(REQ_TIERS) else 10**9
         row = [label]
         for e in ELEMS:
-            if lim == 1000:
-                n = sum(1 for r in res.values() if r[e] >= 1000)
-            else:
-                prev = {1000: 1e9, 200: 1000, 121: 200, 101: 121}[lim]
-                n = sum(1 for r in res.values() if lim <= r[e] < prev)
+            n = sum(1 for r in res.values() if lo <= req_res(r[e]) < hi)
             row.append(str(n))
         add("| " + " | ".join(row) + " |")
     add("")
@@ -151,7 +158,8 @@ def build_report(ctx: Ctx, act_filter: str | None) -> str:
     # ------------------------------------------------------------------ 区域
     add("## 区域：单元素 build 的死路")
     add("")
-    add("按幕列出「该区域里免疫某元素的怪物占比」。100% = 纯该元素的 build 完全无法处理。")
+    add(f"按幕列出「该区域里**免疫且破不开**（抗性 > {threshold:.0f}）的怪物占比」。")
+    add("100% = 纯该元素的 build 在该区域完全无解。")
     add("（只统计 `levels.txt` 里挂在该区域下的怪物，不含随机刷新的精英词缀与特殊事件。）")
     add("")
 
@@ -171,31 +179,31 @@ def build_report(ctx: Ctx, act_filter: str | None) -> str:
                 continue
             cells = []
             for e in ELEMS:
-                n = sum(1 for r in pool if r[e] >= 100)
+                n = sum(1 for r in pool if r[e] > threshold)
                 pct = n / len(pool)
                 cells.append("**100%**" if pct == 1 else (f"{pct:.0%}" if n else "–"))
             add(f"| {name} | {hlvl} | {len(pool)} | " + " | ".join(cells) + " |")
         add("")
 
     # ------------------------------------------------------------------ 死角汇总
-    add("## 死角汇总（某元素 100% 免疫的区域）")
+    add(f"## 无解死角（某元素全部怪抗性都 > {threshold:.0f} 的区域）")
     add("")
     for e in ELEMS:
         dead = []
         for a, name, hlvl, ids in area_list:
             pool = [res[m] for m in ids if m in res]
-            if pool and all(r[e] >= 100 for r in pool):
+            if pool and all(r[e] > threshold for r in pool):
                 dead.append(f"A{a} {name}")
         add(f"- **{e}**：{len(dead)} 个区域 → " + ("、".join(dead) if dead else "无"))
     add("")
 
     # ------------------------------------------------------------------ 绝对免疫名单
-    add("## 抗性 >=200 的怪物（实际不可破）")
+    add(f"## 抗性 > {threshold:.0f} 的怪物（按当前降抗预算 = 无解）")
     add("")
     names = Counter()
     for mid, r in res.items():
         for e in ELEMS:
-            if r[e] >= 200:
+            if r[e] > threshold:
                 names[(mid, e, int(r[e]))] += 1
     for (mid, e, v), _ in sorted(names.items(), key=lambda kv: (-kv[0][2], kv[0][0])):
         add(f"- `{mid}` {e}抗性 {v}")
@@ -209,11 +217,15 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--vanilla", type=Path, default=ROOT / "vanilla")
     ap.add_argument("--out", type=Path, default=ROOT / "docs" / "p1-immunity.md")
     ap.add_argument("--act", default=None, help="只看某一幕（1-5）")
+    ap.add_argument("--res-budget", type=float, default=100.0,
+                    help="假设能凑到的降抗点数（默认 100；对免疫怪按 1/5 生效）")
+    ap.add_argument("--overlay", type=Path, default=None,
+                    help="叠加层目录（如 mod/）：用于量化「打上补丁之后会变成什么样」")
     ap.add_argument("--stdout", action="store_true")
     args = ap.parse_args(argv)
 
-    ctx = Ctx(vanilla=args.vanilla, out=ROOT / "mod")
-    report = build_report(ctx, args.act)
+    ctx = Ctx(vanilla=args.vanilla, out=ROOT / "mod", overlay=args.overlay)
+    report = build_report(ctx, args.act, args.res_budget)
     if args.stdout:
         print(report)
     else:

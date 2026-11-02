@@ -159,6 +159,8 @@ class Ctx:
     _warned: set[tuple[str, str]] = field(default_factory=set)
     _excel: Path | None = None
     _index: dict[str, str] | None = None
+    # 叠加层：优先从这里读表（用于"打上补丁之后世界会变成什么样"的量化验证）。
+    overlay: Path | None = None
 
     # 文件名大小写：游戏跑在 Windows 上，`MonStats.txt` 和 `monstats.txt` 是同一个文件；
     # 但我们的工具跑在 macOS/Linux 上，必须自己做大小写不敏感的解析。
@@ -167,19 +169,21 @@ class Ctx:
     def excel(self) -> Path:
         """基线 txt 所在目录。兼容 data/global/excel 与 Data/Global/Excel 等写法。"""
         if self._excel is None:
-            self._excel = self._find_excel()
+            self._excel = find_excel(self.vanilla)
         return self._excel
 
-    def _find_excel(self) -> Path:
-        for cand in ("data/global/excel", "Data/Global/Excel", "data/Global/Excel", "Data/global/excel"):
-            p = self.vanilla / cand
-            if p.is_dir():
-                return p
-        if self.vanilla.is_dir():
-            for p in sorted(self.vanilla.rglob("*")):
-                if p.is_dir() and p.name.lower() == "excel":
-                    return p
-        return self.vanilla
+    @property
+    def overlay_excel(self) -> Path | None:
+        return find_excel(self.overlay) if self.overlay else None
+
+    def search_dirs(self) -> list[Path]:
+        """读取顺序：叠加层优先，基线兜底。"""
+        dirs = []
+        ov = self.overlay_excel
+        if ov is not None and ov.is_dir():
+            dirs.append(ov)
+        dirs.append(self.excel)
+        return dirs
 
     @property
     def out_prefix(self) -> Path:
@@ -189,9 +193,13 @@ class Ctx:
         return self.out / self.out_prefix / name
 
     def name_index(self) -> dict[str, str]:
-        """lower(文件名) -> 真实文件名。"""
+        """lower(文件名) -> 真实文件名（叠加层与基线的并集）。"""
         if self._index is None:
-            self._index = {p.name.lower(): p.name for p in sorted(self.excel.glob("*.txt"))}
+            idx: dict[str, str] = {}
+            for d in self.search_dirs():
+                for p in sorted(d.glob("*.txt")):
+                    idx.setdefault(p.name.lower(), p.name)
+            self._index = idx
         return self._index
 
     def resolve(self, name: str) -> str:
@@ -209,7 +217,7 @@ class Ctx:
         actual = self.resolve(name)
         if actual in self.files:
             return self.files[actual]
-        p = self.excel / actual
+        p = next(d / actual for d in self.search_dirs() if (d / actual).exists())
         data = p.read_bytes()
         tf = d2txt.TxtFile.loads(data)
         self.files[actual] = tf
@@ -234,6 +242,21 @@ class Ctx:
             if data != self.original.get(name):
                 out[name] = data
         return out
+
+
+def find_excel(root: Path | None) -> Path | None:
+    """在一个目录里找 excel 数据目录（大小写不敏感，找不到就退回根本身）。"""
+    if root is None:
+        return None
+    for cand in ("data/global/excel", "Data/Global/Excel", "data/Global/Excel", "Data/global/excel"):
+        p = root / cand
+        if p.is_dir():
+            return p
+    if root.is_dir():
+        for p in sorted(root.rglob("*")):
+            if p.is_dir() and p.name.lower() == "excel":
+                return p
+    return root
 
 
 _CTX: Ctx | None = None

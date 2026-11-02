@@ -28,6 +28,9 @@ python3 -m tools.p1_immunity     # 地狱免疫墙 → docs/p1-immunity.md
 python3 -m tools.p1_skills       # 技能本体伤害曲线 → docs/p1-skills.md
 python3 -m tools.p1_merc         # 佣兵数值对比 → docs/p1-merc.md
 
+# 量化"打上补丁之后世界会变成什么样"（叠加层）
+python3 -m tools.p1_immunity --overlay mod
+
 # 构建（产出 mod/ + docs/changelog.md）
 python3 -m tools.build
 

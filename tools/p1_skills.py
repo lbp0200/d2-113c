@@ -207,10 +207,12 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--vanilla", type=Path, default=ROOT / "vanilla")
     ap.add_argument("--out", type=Path, default=ROOT / "docs" / "p1-skills.md")
     ap.add_argument("--class", dest="only_class", default=None)
+    ap.add_argument("--overlay", type=Path, default=None,
+                    help="叠加层目录（如 mod/）：用于量化「打上补丁之后会变成什么样」")
     ap.add_argument("--stdout", action="store_true")
     args = ap.parse_args(argv)
 
-    ctx = Ctx(vanilla=args.vanilla, out=ROOT / "mod")
+    ctx = Ctx(vanilla=args.vanilla, out=ROOT / "mod", overlay=args.overlay)
     report = build_report(ctx, args.only_class)
     if args.stdout:
         print(report)
