@@ -94,7 +94,13 @@ def validate(target: Path, baseline: Path | None) -> tuple[int, int]:
                 warn(f"{name}: 找不到主键列 {kc!r}")
             else:
                 seen: dict[str, int] = {}
+                phantom = 0
                 for i, row in enumerate(tf.rows):
+                    # D2 的数据表里常有一些"空壳行"：前几列全空、只有末尾的元数据列有值
+                    # （例如 TreasureClassEx.txt 最后一行只有 `Term`=0）。那不是错误。
+                    if not any(c.strip() for c in row[:10]):
+                        phantom += 1
+                        continue
                     v = tf.get(row, ci)
                     if not v.strip():
                         warn(f"{name}: 第 {i + 2} 行主键为空")
@@ -103,6 +109,8 @@ def validate(target: Path, baseline: Path | None) -> tuple[int, int]:
                         err(f"{name}: 主键 {v!r} 重复（第 {seen[v] + 2} 行和第 {i + 2} 行）")
                     else:
                         seen[v] = i
+                if phantom:
+                    print(f"  · {phantom} 个空壳行（忽略）")
 
         # 4. 数值列
         for col in NUMERIC_COLS.get(name.lower(), []):

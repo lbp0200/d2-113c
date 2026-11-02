@@ -399,6 +399,41 @@ class Selection:
         return self
 
     @_guarded
+    def item_prob(self, item_pattern: str, value, *, label: str | None = None):
+        """把「条目名匹配 item_pattern」的那一列概率设成 value（或 old -> new 的函数）。
+
+        专为 TreasureClassEx 这种「ItemN / ProbN 成对、但配对下标每行都不固定」的表准备：
+        想改「这张表里指向 Good 的那一项的权重」，用列名是做不到的。
+        """
+        h = self.tf.header
+        pairs = [
+            (h.index(f"Item{i}"), h.index(f"Prob{i}"))
+            for i in range(1, 128)
+            if f"Item{i}" in h and f"Prob{i}" in h
+        ]
+        rx = re.compile(item_pattern)
+        for i in self.indices:
+            row = self.tf.rows[i]
+            for ii, pi in pairs:
+                if ii >= len(row) or not rx.search(row[ii]):
+                    continue
+                old = self.tf.get(row, pi)
+                new = value(old) if callable(value) else value
+                if new is None:
+                    continue
+                new = new if isinstance(new, str) else format_number(new)
+                if new == old:
+                    continue
+                self.tf.put(row, pi, new)
+                self.touched += 1
+                col_label = label or f"Prob[{item_pattern}]"
+                self.patch.ctx.record(
+                    Change(self.patch.filename, self._key_of(i),
+                           col_label, old, new, self.patch.why)
+                )
+        return self
+
+    @_guarded
     def swap(self, a: str, b: str):
         """两列互换（少数情况下有用）。"""
         ia, ib = self.tf.need(a), self.tf.need(b)
