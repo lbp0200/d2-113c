@@ -21,6 +21,10 @@ from .d2patch import Ctx, use
 
 ROOT = Path(__file__).resolve().parent.parent
 
+# 名字像 .txt 但不是数据表（自由文本/注释），工具链不该去解析它们。
+# AiParms.txt 是 "Description of Ai Parameters"，纯文档，游戏不当作数据读。
+NON_TABLE = {"aiparms.txt"}
+
 
 # --------------------------------------------------------------- 基线自检
 
@@ -32,6 +36,7 @@ def check_baseline(ctx: Ctx) -> list[str]:
     if not files:
         return [f"{ctx.excel} 下没有 .txt 文件"]
 
+    files = [p for p in files if p.name.lower() not in NON_TABLE]
     print(f"基线自检：{len(files)} 张表（{ctx.excel}）")
     for p in files:
         data = p.read_bytes()

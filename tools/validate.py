@@ -32,6 +32,9 @@ NUMERIC_COLS: dict[str, list[str]] = {}
 
 BAD_TOKENS = ("#REF!", "#N/A", "#VALUE!", "#DIV/0!", "NULL", "None")
 
+# 名字像 txt 但不是数据表（与 tools/build.py 保持一致）
+NON_TABLE = {"aiparms.txt"}
+
 
 def excel_dir(root: Path) -> Path:
     p = root / "data" / "global" / "excel"
@@ -41,7 +44,8 @@ def excel_dir(root: Path) -> Path:
 def validate(target: Path, baseline: Path | None) -> tuple[int, int]:
     errors = 0
     warns = 0
-    files = sorted(excel_dir(target).glob("*.txt"))
+    files = [p for p in sorted(excel_dir(target).glob("*.txt"))
+             if p.name.lower() not in NON_TABLE]
     if not files:
         print(f"[错误] {target} 下没有 .txt")
         return 1, 0
@@ -83,7 +87,7 @@ def validate(target: Path, baseline: Path | None) -> tuple[int, int]:
             err(f"{name}: {n} 行的列数多于表头")
 
         # 3. 主键
-        kc = KEY_COLS.get(name)
+        kc = KEY_COLS.get(name.lower())
         if kc:
             ci = tf.find(kc)
             if ci is None:
@@ -101,7 +105,7 @@ def validate(target: Path, baseline: Path | None) -> tuple[int, int]:
                         seen[v] = i
 
         # 4. 数值列
-        for col in NUMERIC_COLS.get(name, []):
+        for col in NUMERIC_COLS.get(name.lower(), []):
             ci = tf.find(col)
             if ci is None:
                 warn(f"{name}: 声明的数值列 {col!r} 不存在")

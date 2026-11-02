@@ -71,5 +71,31 @@ class TestOps(Base):
             patch("runes.txt", why="拼错了").all().set("ladderOnly", "0")
 
 
+class TestPredicates(unittest.TestCase):
+    """谓词曾经在重构里丢掉 `return f` —— 静默返回 None 会让 where() 静默失效。"""
+
+    def test_all_predicates_return_callables(self):
+        cases = [
+            (d2patch.gt(100), "110", True), (d2patch.gt(100), "100", False),
+            (d2patch.ge(100), "100", True),
+            (d2patch.lt(100), "99", True), (d2patch.lt(100), "100", False),
+            (d2patch.le(100), "100", True),
+            (d2patch.num_eq(1), "1", True), (d2patch.num_eq(1), "2", False),
+            (d2patch.eq("x"), "x", True), (d2patch.ne("x"), "y", True),
+            (d2patch.one_of("a", "b"), "b", True), (d2patch.one_of("a"), "c", False),
+            (d2patch.matches(r"^skeleton"), "skeleton1", True),
+            (d2patch.blank(), "", True), (d2patch.nonblank(), " ", False),
+            (d2patch.isnum(), "1.5", True), (d2patch.not_(d2patch.blank()), "x", True),
+        ]
+        for pred, val, want in cases:
+            self.assertTrue(callable(pred), f"{pred} 不是可调用对象")
+            self.assertIs(pred(val), want, f"{pred}('{val}')")
+
+    def test_predicate_on_non_numeric_is_false(self):
+        for pred in (d2patch.gt(1), d2patch.lt(1), d2patch.le(1), d2patch.ge(1)):
+            self.assertFalse(pred(""), "空单元格不应被当成数字")
+            self.assertFalse(pred("-"))
+
+
 if __name__ == "__main__":
     unittest.main()

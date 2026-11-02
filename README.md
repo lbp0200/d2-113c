@@ -6,7 +6,7 @@
 ## 工作流
 
 ```
-vanilla/   ← 从 MPQ 抽出来的 1.13c 原始 txt（只读基线，一次性）
+vanilla/   ← 1.13c 原始 txt（只读基线，已内置，来源见 vanilla/README.md）
 patches/   ← 所有改动，用一句话声明（这就是"源码"）
 tools/     ← Python：解析 / 构建 / 校验
 mod/       ← 构建产物，只含被改过的表（gitignore）
@@ -20,8 +20,11 @@ docs/      ← changelog（自动生成）+ 设计文档
 ## 命令
 
 ```bash
-# 抽取完 MPQ 后，第一件事：确认基线能被无损读回
+# 第一件事：确认基线能被无损读回（当前 91 张表全绿）
 python3 -m tools.build --check
+
+# P1 只读分析：地狱免疫墙报告 → docs/p1-immunity.md
+python3 -m tools.p1_immunity
 
 # 构建（产出 mod/ + docs/changelog.md）
 python3 -m tools.build
@@ -36,18 +39,13 @@ python3 -m tools.validate
 python3 -m unittest discover -s tests -t .
 ```
 
-## vanilla 基线怎么来（P0，一次性）
+## vanilla 基线
 
-1. VBox 里装好纯净 1.13c + LoD，确认能离线启动 → **打快照**。
-2. 用 Ladik's MPQ Editor 打开 `d2data.mpq` / `d2exp.mpq` / `patch_d2.mpq`，
-   把 `data/global/excel/` 整个抽出来（`patch_d2.mpq` 里的覆盖前两个）。
-3. 按此结构放到本项目：
+已内置（来自 [whipowill/d2-113c-txt](https://github.com/whipowill/d2-113c-txt)，
+原出处 PhrozenKeep / CountDracula），92 个文件布局为 `vanilla/data/global/excel/*.txt`。
+来源、校验结果与 1.13c 数据坑详见 **[vanilla/README.md](vanilla/README.md)**。
 
-```
-vanilla/data/global/excel/*.txt
-```
-
-4. `python3 -m tools.build --check` —— 全绿就说明基线可信。
+想自己从 MPQ 重抽也行，抽完跑 `python3 -m tools.build --check` 对比即可。
 
 ## 写补丁
 

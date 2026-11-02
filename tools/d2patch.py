@@ -81,11 +81,15 @@ def lt(n):
         x = to_number(v)
         return x is not None and x < n
 
+    return f
+
 
 def le(n):
     def f(v):
         x = to_number(v)
         return x is not None and x <= n
+
+    return f
 
 
 def num_eq(n):
@@ -153,12 +157,29 @@ class Ctx:
     warnings: list[str] = field(default_factory=list)
     skipped: list[tuple[str, str]] = field(default_factory=list)
     _warned: set[tuple[str, str]] = field(default_factory=set)
+    _excel: Path | None = None
+    _index: dict[str, str] | None = None
+
+    # 文件名大小写：游戏跑在 Windows 上，`MonStats.txt` 和 `monstats.txt` 是同一个文件；
+    # 但我们的工具跑在 macOS/Linux 上，必须自己做大小写不敏感的解析。
 
     @property
     def excel(self) -> Path:
-        """基线 txt 所在目录。支持 vanilla/data/global/excel 与 vanilla 直放两种布局。"""
-        p = self.vanilla / "data" / "global" / "excel"
-        return p if p.is_dir() else self.vanilla
+        """基线 txt 所在目录。兼容 data/global/excel 与 Data/Global/Excel 等写法。"""
+        if self._excel is None:
+            self._excel = self._find_excel()
+        return self._excel
+
+    def _find_excel(self) -> Path:
+        for cand in ("data/global/excel", "Data/Global/Excel", "data/Global/Excel", "Data/global/excel"):
+            p = self.vanilla / cand
+            if p.is_dir():
+                return p
+        if self.vanilla.is_dir():
+            for p in sorted(self.vanilla.rglob("*")):
+                if p.is_dir() and p.name.lower() == "excel":
+                    return p
+        return self.vanilla
 
     @property
     def out_prefix(self) -> Path:
@@ -167,20 +188,32 @@ class Ctx:
     def out_path(self, name: str) -> Path:
         return self.out / self.out_prefix / name
 
-    def load(self, name: str) -> d2txt.TxtFile:
-        if name in self.files:
-            return self.files[name]
-        p = self.excel / name
-        if not p.exists():
+    def name_index(self) -> dict[str, str]:
+        """lower(文件名) -> 真实文件名。"""
+        if self._index is None:
+            self._index = {p.name.lower(): p.name for p in sorted(self.excel.glob("*.txt"))}
+        return self._index
+
+    def resolve(self, name: str) -> str:
+        """把 `monstats.txt` 解析成 `MonStats.txt`（Windows 风格的大小写不敏感）。"""
+        actual = self.name_index().get(Path(name).name.lower())
+        if actual is None:
             raise SystemExit(
-                f"[错误] 找不到 {p}\n"
-                f"  → vanilla 基线还没抽取。见 PLAN.md 的 P0：先在 VM 里用 MPQ Editor\n"
-                f"    把 data/global/excel/*.txt 抽到 {self.vanilla}/data/global/excel/ 下。"
+                f"[错误] 基线里没有 {name}\n"
+                f"  → 基线目录：{self.excel}（已找到 {len(self.name_index())} 张表）\n"
+                f"  → 若是第一次使用，把 1.13c 的 data/global/excel/*.txt 放到 {self.vanilla}/data/global/excel/"
             )
+        return actual
+
+    def load(self, name: str) -> d2txt.TxtFile:
+        actual = self.resolve(name)
+        if actual in self.files:
+            return self.files[actual]
+        p = self.excel / actual
         data = p.read_bytes()
         tf = d2txt.TxtFile.loads(data)
-        self.files[name] = tf
-        self.original[name] = data
+        self.files[actual] = tf
+        self.original[actual] = data
         return tf
 
     def warn_once(self, file: str, col: str, msg: str) -> None:
@@ -293,6 +326,17 @@ class Selection:
     # --------------------------------------------------------------- 操作
 
     @_guarded
+    def where(self, col: str, cond=None) -> "Selection":
+        """在当前选中的行里再过滤一遍（可链式：.where(a).where(b).set(...)）。"""
+        ci = self.tf.need(col)
+        if cond is None:
+            cond = nonblank()
+        elif not callable(cond):
+            cond = eq(cond)
+        keep = [i for i in self.indices if cond(self.tf.get(self.tf.rows[i], ci))]
+        return Selection(self.patch, keep)
+
+    @_guarded
     def set(self, col: str, value):
         """把列 set 成固定值，或者 set 成 old -> new 的函数（返回 None 表示跳过）。"""
         ci = self.tf.need(col)
@@ -346,11 +390,11 @@ class Patch:
     def __init__(self, ctx: Ctx, filename: str, why: str = "",
                  *, key: str | None = None, soft: bool = False):
         self.ctx = ctx
-        self.filename = filename
+        self.filename = ctx.resolve(filename)
         self.why = why
         self.soft = soft
         self.tf = ctx.load(filename)
-        self.key_col = key or KEY_COLS.get(filename)
+        self.key_col = key or KEY_COLS.get(self.filename.lower())
 
     def _select(self, preds) -> Selection:
         rows = self.tf.rows
