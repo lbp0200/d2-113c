@@ -53,8 +53,10 @@ TREES: list[dict] = [
          skills=["Magic Arrow", "Fire Arrow", "Cold Arrow", "Multiple Shot",
                  "Exploding Arrow", "Ice Arrow", "Guided Arrow", "Strafe",
                  "Immolation Arrow", "Freezing Arrow"],
-         wins=["M2", "M6"], status=HEALTHY,
-         note="物理免疫只 3%，弓马免疫压力最小；元素箭支线缺降抗（见 p2-items 的 craft）"),
+         wins=["M1", "M2", "M6"], status=DONE,
+         note="已修：元素箭的法力曲线倒挂（Fire Arrow 24→8、Cold Arrow 28→12）。"
+              "元素箭同时吃武器伤害(SrcDam 128)和元素伤害，成长性不比物理弓差；"
+              "卡它们的是火免 + 无降抗，降抗由穿透 craft 补"),
     dict(cls="ama", tree="被动与魔法", dmg="—",
          skills=["Inner Sight", "Critical Strike", "Dodge", "Slow Missiles",
                  "Avoid", "Penetrate", "Dopplezon", "Evade", "Valkyrie", "Pierce"],

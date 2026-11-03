@@ -145,3 +145,28 @@ for _col in ["EMin", "EMax"] + [
     f"{pre}Lev{i}" for pre in ("EMin", "EMax") for i in range(1, 6)
 ]:
     _isy.mul(_col, 3.2, ndigits=0)
+
+
+# --------------------------------------------------------------- 亚马逊元素弓
+# 诊断：弓系技能的**法力曲线是倒挂的**。
+#
+#   技能            需等级  法力   L20 伤害   伤害/法力
+#   Fire Arrow          1    24    99-106       4.3    ← 1 级技能，法力全系第二高
+#   Cold Arrow          6    28     87-90       3.2    ← 法力全系最高，伤害全系最低
+#   Exploding Arrow    12    10   217-241      22.9
+#   Ice Arrow          18    16   336-356      21.6
+#   Immolation Arrow   24    12   652-663      54.8    ← 全弓系最高的伤害/法力
+#   Freezing Arrow     30    18   490-500      27.5
+#
+# 低阶元素箭比高阶贵一倍多，这是明确的缺陷而不是设计。
+#
+# 另一个要点：**元素箭同时吃武器伤害（SrcDam=128）和元素伤害**，
+# 所以它们的成长性不比物理弓差 —— 卡它们的是 15% 的火免和没有降抗，
+# 而降抗已经由穿透 craft（pierce-fire / pierce-cold）补上了。
+#
+# 改动只修法力倒挂：Fire Arrow 24→8、Cold Arrow 28→12。
+for _name, _mana in (("Fire Arrow", 8), ("Cold Arrow", 12)):
+    patch(
+        "skills.txt",
+        why=f"P2-亚马逊元素弓：{_name} 法力 → {_mana}（原法力曲线倒挂：低阶比高阶贵一倍多）",
+    ).where("skill", matches(rf"^{_name}$")).set("mana", _mana)
