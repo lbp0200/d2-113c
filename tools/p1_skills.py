@@ -156,6 +156,8 @@ def _eval_calc(calc: str, p: list[str], maxlvl: int) -> tuple[float, float] | No
             return -min(num(3), 150), -min(num(3) + num(4) * (maxlvl - 1), 150)
         if calc == "ln12":
             return num(1), num(1) + num(2) * (maxlvl - 1)
+        if calc == "ln34":
+            return num(3), num(3) + num(4) * (maxlvl - 1)
         if calc == "-ln12":
             return -num(1), -(num(1) + num(2) * (maxlvl - 1))
         if calc == "dm12":
@@ -254,21 +256,25 @@ def mastery_audit(ctx: Ctx) -> tuple[list[str], dict[str, dict[str, float]]]:
     """
     f = ctx.load("skills.txt")
     ci = {n: f.need(n) for n in
-          ["Param1", "Param2", "reqlevel", "skilldesc"] +
+          ["maxlvl", "reqlevel", "skilldesc"] +
+          [f"Param{i}" for i in range(1, 9)] +
           [f"passivestat{i}" for i in range(1, 6)] +
           [f"passivecalc{i}" for i in range(1, 6)]}
-    grants: dict[str, list[tuple[str, str, list[str], float]]] = {}
+    grants: dict[str, list[tuple[str, str, list[str], int]]] = {}
     for r in f.rows:
         if not r or not r[0]:
             continue
+        params = [f.get(r, ci[f"Param{i}"]) for i in range(1, 9)]
+        try:
+            maxlvl = int(float(f.get(r, ci["maxlvl"]) or 1))
+        except ValueError:
+            maxlvl = 1
         for i in range(1, 6):
             stat = f.get(r, ci[f"passivestat{i}"])
             if not stat.startswith("passive"):
                 continue
             grants.setdefault(stat, []).append(
-                (r[0], f.get(r, ci[f"passivecalc{i}"]),
-                 [f.get(r, ci["Param1"]), f.get(r, ci["Param2"])],
-                 float(f.get(r, ci["reqlevel"]) or 0))
+                (r[0], f.get(r, ci[f"passivecalc{i}"]), params, maxlvl)
             )
 
     L: list[str] = []
@@ -286,7 +292,10 @@ def mastery_audit(ctx: Ctx) -> tuple[list[str], dict[str, dict[str, float]]]:
             if gs:
                 names = "、".join(f"`{n}`" for n, *_ in gs)
                 calc = gs[0][1]
-                val = _ln12(gs[0][2], 20) if calc == "ln12" else None
+                ev = _eval_calc(calc, gs[0][2], gs[0][3])
+                val = None if ev is None else ev[1]
+                if stat.endswith("_pierce") and val is not None:
+                    val = -val
                 shown = "—" if val is None else f"{val:+.0f}%"
                 add(f"| `{stat}` | {names} | `{calc}` | {shown} |")
             else:
@@ -298,12 +307,14 @@ def mastery_audit(ctx: Ctx) -> tuple[list[str], dict[str, dict[str, float]]]:
         dmg = pierce = 0.0
         for stat, key in ((m_stat, "dmg"), (p_stat, "pierce")):
             gs = grants.get(stat, [])
-            if gs and gs[0][1] == "ln12":
-                v = _ln12(gs[0][2], 20)
-                if key == "dmg":
-                    dmg = v
-                else:
-                    pierce = v
+            ev = _eval_calc(gs[0][1], gs[0][2], gs[0][3]) if gs else None
+            if ev is None:
+                continue
+            v = ev[1]
+            if key == "dmg":
+                dmg = v
+            else:
+                pierce = v  # pierce stat 本身是正数（正数 = 降抗点数）
         vals[elem] = {"dmg": dmg, "pierce": pierce}
 
     add("### 对高抗性怪的**实际**伤害倍率（掌握满级 20 级）")

@@ -13,6 +13,23 @@
 
 理由：地狱抗性封顶 100：免疫数量不变，但任何降抗都能生效（排除 1000 的设计性绝对免疫）
 
+## Skills.txt
+
+| 列 | 改动行数 | 示例 |
+|---|---:|---|
+| `Param1` | 1 | `Fire Mastery`: 30 → 24 |
+| `Param2` | 1 | `Fire Mastery`: 7 → 4 |
+| `Param3` | 1 | `Fire Mastery`: (空) → 7 |
+| `Param4` | 1 | `Fire Mastery`: (空) → 2 |
+| `passivestat2` | 1 | `Fire Mastery`: (空) → passive_fire_pierce |
+| `passivecalc2` | 1 | `Fire Mastery`: (空) → ln34 |
+| `*Param1 Description` | 1 | `Fire Mastery`: % Damage bonus → Damage bonus |
+| `*Param2 Description` | 1 | `Fire Mastery`: % Damage bonus per level → Damage bonus per level |
+| `*Param3 Description` | 1 | `Fire Mastery`: (空) → Enemy fire resist reduction |
+| `*Param4 Description` | 1 | `Fire Mastery`: (空) → Enemy fire resist reduction per level |
+
+理由：P2-法师火系：火掌握 伤害163%→100%，并发放 -45% 火穿透（填 passive_fire_pierce 的空口）
+
 ## TreasureClassEx.txt
 
 | 列 | 改动行数 | 示例 |
