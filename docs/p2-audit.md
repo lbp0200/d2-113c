@@ -9,15 +9,21 @@
 | 表 | 数值上升 | 数值下降 | 非数值改动 | 新增行 |
 |---|---:|---:|---:|---:|
 | CubeMain.txt | 0 | 0 | 0 | 4 |
+| Hireling.txt | 6 | 5 | 0 | 0 |
 | MonStats.txt | 0 | 332 | 0 | 0 |
 | Skills.txt | 50 | 9 | 10 | 0 |
 | TreasureClassEx.txt | 107 | 0 | 0 | 0 |
-| **合计** | **157** | **341** | **10** | **4** |
+| **合计** | **163** | **346** | **10** | **4** |
 
 ## 所有「数值下降」（必须能被解释）
 
 | 表 | 行 | 列 | 前 | 后 |
 |---|---|---|---:|---:|
+| Hireling.txt | `#94` | Gold | 21000 | **12000** |
+| Hireling.txt | `#95` | Gold | 27000 | **12000** |
+| Hireling.txt | `#96` | Gold | 21000 | **12000** |
+| Hireling.txt | `#119` | Gold | 32000 | **15000** |
+| Hireling.txt | `#120` | Gold | 32000 | **15000** |
 | MonStats.txt | `skeleton3` | ResCo(H) | 110 | **100** |
 | MonStats.txt | `skeleton5` | ResLi(H) | 120 | **100** |
 | MonStats.txt | `zombie1` | ResCo(H) | 120 | **100** |

@@ -49,7 +49,6 @@ KEY_COLS = {
     "properties.txt": "code",
     "itemstatcost.txt": "Stat",
     "charstats.txt": "class",
-    "hireling.txt": "Id",
     "pettype.txt": "pet type",
     "difficultylevels.txt": "Name",
     "monlvl.txt": "Level",
@@ -280,6 +279,32 @@ def patch(filename: str, why: str = "", *, key: str | None = None, soft: bool = 
 # --------------------------------------------------------------------- 行选择
 
 
+# 这些表没有单一主键，必须用几列联合才唯一
+# （`hireling.txt` 每行是「佣兵 × 子类型 × 难度」，单看 Id 会重复十几次）
+COMPOSITE_KEYS: dict[str, list[str]] = {
+    # 每行 = 佣兵 × 子类型 × 编号 × 难度 × **等级断点**（Level 3/25/49 三段成长）
+    "hireling.txt": ["Hireling", "SubType", "Id", "Version", "Difficulty", "Level"],
+}
+
+
+def row_key(tf, row, filename: str) -> str:
+    """取一行的标识。优先用复合主键，其次 KEY_COLS，最后空串。"""
+    low = filename.lower()
+    cols = COMPOSITE_KEYS.get(low)
+    if cols:
+        parts = []
+        for c in cols:
+            ci = tf.find(c)
+            parts.append((tf.get(row, ci) if ci is not None else "").strip())
+        return "-".join(parts)
+    kc = KEY_COLS.get(low)
+    if kc:
+        ci = tf.find(kc)
+        if ci is not None:
+            return tf.get(row, ci).strip()
+    return ""
+
+
 def _guarded(fn):
     @wraps(fn)
     def wrapper(self, *a, **kw):
@@ -312,14 +337,8 @@ class Selection:
     # ----------------------------------------------------------- 内部工具
 
     def _key_of(self, i: int) -> str:
-        kc = self.patch.key_col
-        if kc:
-            ci = self.tf.find(kc)
-            if ci is not None:
-                v = self.tf.get(self.tf.rows[i], ci)
-                if v.strip():
-                    return v
-        return f"#{i + 1}"
+        v = row_key(self.tf, self.tf.rows[i], self.patch.filename)
+        return v if v.strip() else f"#{i + 1}"
 
     def _write(self, i: int, ci: int, col: str, new) -> None:
         row = self.tf.rows[i]

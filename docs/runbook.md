@@ -138,7 +138,7 @@ dir /od "C:\Diablo II\data\global\excel\*.bin" | findstr /i "MonStats"
 
 ## 5. B 档实施步骤
 
-> 补丁草稿见 §5.1，**现在先不启用**（写在这里等游戏可测）。
+> **已启用**：实际补丁在 `patches/merc.py`。§5.1 保留草稿原文作为决策记录。
 
 ### 5.1 草稿补丁（等游戏可测后启用）
 

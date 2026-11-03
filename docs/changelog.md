@@ -10,6 +10,16 @@
 
 理由：P2 元素穿透 craft（cold）：给没有掌握技能的职业一条降抗途径；P2 元素穿透 craft（fire）：给没有掌握技能的职业一条降抗途径；P2 元素穿透 craft（lightning）：给没有掌握技能的职业一条降抗途径；P2 元素穿透 craft（poison）：给没有掌握技能的职业一条降抗途径
 
+## Hireling.txt
+
+| 列 | 改动行数 | 示例 |
+|---|---:|---|
+| `HP` | 3 | `Eastern Sorceror-Fire-Hell-21-100-3-79`: 863 → 1165；`Eastern Sorceror-Cold-Hell-22-100-3-79`: 863 → 1165；`Eastern Sorceror-Ltng-Hell-23-100-3-79`: 863 → 1165 |
+| `HP/Lvl` | 3 | `Eastern Sorceror-Fire-Hell-21-100-3-79`: 27 → 36；`Eastern Sorceror-Cold-Hell-22-100-3-79`: 27 → 36；`Eastern Sorceror-Ltng-Hell-23-100-3-79`: 27 → 36 |
+| `Gold` | 5 | `Eastern Sorceror-Fire-Hell-21-100-3-79`: 21000 → 12000；`Eastern Sorceror-Cold-Hell-22-100-3-79`: 27000 → 12000；`Eastern Sorceror-Ltng-Hell-23-100-3-79`: 21000 → 12000；…另 2 行 |
+
+理由：B1 A3 铁狼地狱档 HP ×1.35（1025 → 1381 @85，= A2 的 85%）；B1b A3 铁狼雇价统一 12000（原 21000/27000/21000，比 A2 贵 40%）；B2 A5 野蛮人雇价 32000→15000（血只差 A2 12%，却贵 113%）；不加光环
+
 ## MonStats.txt
 
 | 列 | 改动行数 | 示例 |

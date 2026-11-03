@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 
 from . import d2txt
-from .d2patch import KEY_COLS
+from .d2patch import COMPOSITE_KEYS, KEY_COLS, row_key
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -87,6 +87,22 @@ def validate(target: Path, baseline: Path | None) -> tuple[int, int]:
             err(f"{name}: {n} 行的列数多于表头")
 
         # 3. 主键
+        if name.lower() in COMPOSITE_KEYS:
+            cc = COMPOSITE_KEYS[name.lower()]
+            seen: dict[str, int] = {}
+            phantom = 0
+            for i, row in enumerate(tf.rows):
+                if not any(c.strip() for c in row[:10]):
+                    phantom += 1
+                    continue
+                v = row_key(tf, row, name)
+                if v in seen:
+                    err(f"{name}: 复合主键 {cc} = {v!r} 重复（第 {seen[v] + 2} 行和第 {i + 2} 行）")
+                else:
+                    seen[v] = i
+            if phantom:
+                print(f"  · {phantom} 个空壳行（忽略）")
+
         kc = KEY_COLS.get(name.lower())
         if kc:
             ci = tf.find(kc)
