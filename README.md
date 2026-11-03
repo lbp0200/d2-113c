@@ -9,7 +9,8 @@
 - 游戏到手后的执行顺序：[docs/runbook.md](docs/runbook.md)
 - **改了补丁之后**：`python3 -m tools.all --reports` 一条命令重生成 `mod/` 与全部报告
   （顺序有依赖：先 build 再分析；漏跑会被 `tests/test_p2_docs.py` 抓到）
-- 装备层（进行中）：**[docs/p3-items.md](docs/p3-items.md)** —— 380 件暗金的体检表（死属性 / 被覆盖 / 无身份）
+- 装备层（进行中）：**[docs/p3-items.md](docs/p3-items.md)** —— 380 件暗金的体检表
+  · 套装体检：[docs/p3-sets.md](docs/p3-sets.md) —— 32 套 / 128 件，看"凑到第几件才值得穿"
 - 职业技能平衡：**[docs/p2-balance-plan.md](docs/p2-balance-plan.md)**
   · 21 系体检表（自动生成）：[docs/p2-trees.md](docs/p2-trees.md)
   · 15 个未改动系的体检结论：[docs/p2-healthy.md](docs/p2-healthy.md)
