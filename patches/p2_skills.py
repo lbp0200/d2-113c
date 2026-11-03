@@ -94,3 +94,28 @@ for _name, _mana, _factor, _why in _DRU_FIRE:
         f"{pre}Lev{i}" for pre in ("EMin", "EMax") for i in range(1, 6)
     ]:
         _p.mul(_col, _factor, ndigits=0)
+
+
+# --------------------------------------------------------------- 死灵毒系
+# 诊断（详见 docs/p1-skills.md 的「毒系：EMin/EMax 是速率，不是总量」）：
+#   毒系的伤害列是**每帧速率**，`ELen` 才是持续时间（25 帧 = 1 秒）。
+#   所以 Poison Nova L20 的真实总量是 12.5-13.3/帧 × 50 帧 = 625-666，
+#   不是主表上那个"12-13"。**按总量算，它和 Bone Spirit(600-645) 同档。**
+#
+# 那么毒系的真问题不是伤害，而是：
+#   1. 摊在 2 秒里，打完不能立刻见效；2. 法力 20 偏高，密集清场时续不上。
+#
+# 毒的降抗本来就有，但在**另一个系**里：诅咒系的 Lower Resist −70%（含毒）。
+# 这是"跨系依赖"，所以毒与骨这一格的自降抗看起来是空的。
+#
+# 定位因此定为 **M2 密集清场**：一次施法覆盖全屏、放完就走。
+# 改动只动"可持续性"：法力 20→16、速率 ×1.25 → 总量约 780-830，约 50 总量/法力。
+_pn = patch(
+    "skills.txt",
+    why="P2-死灵毒系：Poison Nova 法力 20→16、毒速率 ×1.25（定位 M2 全屏清场）",
+).where("skill", matches(r"^Poison Nova$"))
+_pn.set("mana", 16)
+for _col in ["EMin", "EMax"] + [
+    f"{pre}Lev{i}" for pre in ("EMin", "EMax") for i in range(1, 6)
+]:
+    _pn.mul(_col, 1.25, ndigits=0)

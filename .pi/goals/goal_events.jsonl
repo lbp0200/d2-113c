@@ -1,3 +1,5 @@
 {"type":"goal_created","goalId":"mw05wo5q-b5rmpb","objective":"把 1.13c MOD 的 21 个职业/技能系逐一平衡体检并落地改动：没有「胜场」的系修到能在至少一个场景最优，过度全能的系靠抬高别人而非削弱来制衡，健康的系只出书面结论不动数据，最终每系都有一条可复核的判定与证据。","sisyphus":false,"autoContinue":true,"at":"2026-11-03T04:02:47.246Z"}
 {"type":"task_list_set","goalId":"mw05wo5q-b5rmpb","taskCount":1,"blockCompletion":false,"at":"2026-11-03T04:02:47.246Z"}
 {"type":"task_started","goalId":"mw05wo5q-b5rmpb","taskId":"baseline","at":"2026-11-03T04:02:59.872Z"}
+{"type":"task_complete","goalId":"mw05wo5q-b5rmpb","taskId":"baseline","evidence":"tools/p2_trees.py + docs/p2-trees.md 生成 21 行体检表（伤害类型/技能数/胜场/自降抗/主输出/改动列/状态）；8 项单测校验手写树归属，总计 55 项全绿；法师火(✅)与德鲁伊火(✅)的改动列与 changelog 一致","at":"2026-11-03T04:06:08.245Z"}
+{"type":"task_started","goalId":"mw05wo5q-b5rmpb","taskId":"nec-poison","at":"2026-11-03T04:06:23.292Z"}

@@ -169,6 +169,62 @@ def _eval_calc(calc: str, p: list[str], maxlvl: int) -> tuple[float, float] | No
     return None
 
 
+def poison_total(ctx: Ctx) -> list[str]:
+    """毒系的"总量"在哪：`EMin/EMax` 是**每帧速率**，`ELen` 才是持续时间（帧）。
+
+    p1-skills 主表的伤害列对毒系显示的是**速率**，直接和火球比会低估一个数量级。
+    真实总量 = 速率 × 持续帧数。25 帧 = 1 秒。
+
+    只对「持续时间不随等级增长」（`ELevLen1..3` 全空）的技能给出可核算的总量；
+    其余技能的长度增长分段语义在 txt 里没有文档，宁可标「不可核算」也不猜。
+    """
+    tf = ctx.load("skills.txt")
+    c = {n: tf.need(n) for n in ["skill", "charclass", "mana", "ELen", "HitShift",
+                                 "ELevLen1", "ELevLen2", "ELevLen3"]}
+    skipped: list[str] = []
+    L = ["## 毒系：`EMin/EMax` 是速率，不是总量", ""]
+    L += [
+        "毒系技能的伤害列是**每帧伤害速率**，`ELen` 是持续时间（单位：帧，25 帧 = 1 秒）。",
+        "所以 **总量 = 速率 × 持续帧数**。主表里毒系那一列若当成「单次伤害」去和火球比，",
+        "会低估一个数量级 —— 这是 1.13c 最容易被误读的一组列。",
+        "",
+        "| 技能 | L20 每帧速率 | 持续（帧） | L20 总量 | 法力 | 总量/法力 |",
+        "|---|---:|---:|---:|---:|---:|",
+    ]
+    for row in tf.rows:
+        if not row or not row[0]:
+            continue
+        if tf.get(row, tf.need("EType")).strip() != "pois":
+            continue
+        # `HitShift` 为空 = 这一行不是常规的"每帧伤害"读数（Poison Javelin 的原始值高达
+        # 912，Plague Poppy/毒蔓是召唤物光环），拿它算总量会得出几万的荒谬数字 → 直接排除
+        if not (d2txt.to_number(tf.get(row, c["HitShift"])) or 0):
+            skipped.append(row[0])
+            continue
+        grown = any(tf.get(row, c[f"ELevLen{i}"]) for i in (1, 2, 3))
+        lo, hi = skill_damage(tf, row, 20)
+        elen = d2txt.to_number(tf.get(row, c["ELen"])) or 0
+        mana = d2txt.to_number(tf.get(row, c["mana"])) or 0
+        if grown or not elen:
+            L.append(f"| {row[0]} | {lo:.1f}-{hi:.1f} | — | —（时长随等级增长，不可离线核算） "
+                     f"| {mana:.0f} | — |")
+            continue
+        t_lo, t_hi = lo * elen, hi * elen
+        per = (t_lo + t_hi) / 2 / mana if mana else 0
+        L.append(f"| {row[0]} | {lo:.1f}-{hi:.1f} | {elen:.0f} | "
+                 f"**{t_lo:.0f}-{t_hi:.0f}** | {mana:.0f} | {per:.1f} |")
+    if skipped:
+        L += ["", f"> 未列入（`HitShift` 为空、不是常规每帧伤害列）：{'、'.join(f'`{s}`' for s in skipped)}"]
+    L += [
+        "",
+        "> 对照：骨系 `Bone Spirit` L20 是 **600-645 一次性**、24 法力 → 25.9 伤害/法力。",
+        "> `Poison Nova` 的总量和它同档，但**摊在 2 秒里、而且是全屏**。",
+        "> 所以毒的定位不是「打得快」，是「放一次走人」。",
+        "",
+    ]
+    return L
+
+
 def resistance_audit(ctx: Ctx) -> list[str]:
     """审计「谁能让怪物抗性下降」。
 
@@ -395,6 +451,7 @@ def build_report(ctx: Ctx, only_class: str | None) -> str:
     audit, _ = mastery_audit(ctx)
     L += audit
     L += resistance_audit(ctx)
+    L += poison_total(ctx)
 
     if weapon:
         add("## 武器百分比技能（伤害取决于武器，`skills.txt` 只有百分比）")

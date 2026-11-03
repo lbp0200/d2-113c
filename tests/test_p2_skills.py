@@ -5,8 +5,10 @@
 """
 
 import unittest
+from pathlib import Path
 
-from tools.p1_skills import _eval_calc
+from tools.d2patch import Ctx
+from tools.p1_skills import _eval_calc, poison_total
 
 
 class TestEvalCalc(unittest.TestCase):
@@ -73,3 +75,53 @@ class TestMasteryMultiplier(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestPoisonTotal(unittest.TestCase):
+    """毒系：`EMin/EMax` 是每帧速率，`ELen` 才是持续时间。总量 = 速率 × 帧。
+
+    这条公式是"毒系被误读成鸡肋"的根源，算错了整份毒系结论都会错。
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        root = Path(__file__).resolve().parent.parent
+        cls.ctx = Ctx(vanilla=root / "vanilla", out=root / "mod")
+        cls.lines = poison_total(cls.ctx)
+        cls.text = "\n".join(cls.lines)
+
+    def _row(self, skill: str) -> list[str]:
+        for line in self.lines:
+            if line.startswith(f"| {skill} |"):
+                return [c.strip() for c in line.strip("|").split("|")]
+        raise AssertionError(f"表里没有 {skill}")
+
+    def test_nova_total_is_rate_times_frames(self):
+        _, rate, frames, total, _mana, _per = self._row("Poison Nova")
+        lo, hi = (float(x) for x in rate.split("-"))
+        n_lo, n_hi = (float(x.strip("*")) for x in total.split("-"))
+        self.assertEqual(frames, "50")
+        # 允许四舍五入误差
+        self.assertAlmostEqual(n_lo, lo * 50, delta=1.0)
+        self.assertAlmostEqual(n_hi, hi * 50, delta=1.0)
+
+    def test_skills_without_hitshift_are_excluded(self):
+        # Poison Javelin 的 HitShift 为空（原始值 912 不是每帧伤害），
+        # Plague Poppy 是召唤物光环 → 都不能拿来算总量
+        self.assertIn("未列入", self.text)
+        self.assertIn("Poison Javelin", self.text)
+        self.assertIn("Plague Poppy", self.text)
+        for skill in ("Poison Javelin", "Plague Poppy"):
+            for line in self.lines:
+                self.assertFalse(line.startswith(f"| {skill} |"),
+                                 f"{skill} 不该出现在总量表里")
+
+    def test_growing_duration_is_not_guessed(self):
+        # 时长随等级增长的技能必须标"不可核算"，不能编一个数
+        row = self._row("Poison Explosion")
+        self.assertIn("不可离线核算", row[3])
+
+    def test_nova_beats_bone_spirit_per_mana(self):
+        # 这份报告的核心结论：按总量算，Poison Nova 的法力效率高于骨灵
+        nova = float(self._row("Poison Nova")[5])
+        self.assertGreater(nova, 25.9)

@@ -97,8 +97,10 @@ TREES: list[dict] = [
          skills=["Teeth", "Bone Armor", "Poison Dagger", "Corpse Explosion",
                  "Bone Wall", "Poison Explosion", "Bone Spear", "Bone Prison",
                  "Poison Nova", "Bone Spirit"],
-         wins=["M3"], status=TODO,
-         note="骨系是魔法伤害（免疫 1%）很稳；**毒系是唯一没有任何掌握 stat 的伤害系**"),
+         wins=["M2", "M3"], status=DONE,
+         note="已修：毒的总量是「速率×帧」（L20 625-666），与骨灵同档；"
+              "Poison Nova 法力 20→16、速率 ×1.25 → 797-847（51.4 总量/法力）"
+              "→ 毒赢 M2 全屏、骨赢 M3 单体。降抗在**诅咒系**（Lower Resist −70% 含毒），跨系依赖"),
     dict(cls="nec", tree="诅咒", dmg="—",
          skills=["Amplify Damage", "Dim Vision", "Weaken", "Iron Maiden", "Terror",
                  "Confuse", "Life Tap", "Attract", "Decrepify", "Lower Resist"],
@@ -184,30 +186,60 @@ TREES: list[dict] = [
 assert len(TREES) == 21, f"应该是 21 个技能系，现在 {len(TREES)}"
 
 
-def pierce_grants(ctx: Ctx) -> dict[str, tuple[str, float]]:
-    """-> {技能名: (pierce stat, L20 值)}。只有"发放" pasivestat 的技能才算。"""
+# 敌方抗性 -> 元素（权威映射：只有这四个 stat 是"降敌人抗性"）
+AURA_DEBUFF = {
+    "fireresist": "火", "coldresist": "冰", "lightresist": "电", "poisonresist": "毒",
+}
+PIERCE_STAT = {
+    "passive_fire_pierce": "火", "passive_cold_pierce": "冰",
+    "passive_ltng_pierce": "电", "passive_pois_pierce": "毒",
+}
+
+
+def pierce_grants(ctx: Ctx) -> dict[str, list[tuple[str, float]]]:
+    """-> {技能名: [(元素, 降抗点数), ...]}
+
+    两条途径都算数：
+      1. `passivestat` 发放的 `passive_*_pierce`（冰掌握 / 火掌握 / 装备型技能）
+      2. `aurastat` 里对面抗性的**负值**（信念光环、降抗诅咒）
+    正值的抗性光环（抗火/救助）是给自己加抗，不算 —— 靠"只收负值"区分。
+    """
     tf = ctx.load("skills.txt")
-    c = {n: tf.need(n) for n in
-         ["maxlvl"] + [f"Param{i}" for i in range(1, 9)] +
-         [f"passivestat{i}" for i in range(1, 6)] + [f"passivecalc{i}" for i in range(1, 6)]}
-    out: dict[str, tuple[str, float]] = {}
+    c = {n: tf.need(n) for n in ["maxlvl"] + [f"Param{i}" for i in range(1, 9)] +
+         [f"passivestat{i}" for i in range(1, 6)] + [f"passivecalc{i}" for i in range(1, 6)] +
+         [f"aurastat{i}" for i in range(1, 7)] + [f"aurastatcalc{i}" for i in range(1, 7)]}
+
+    out: dict[str, list[tuple[str, float]]] = {}
     for row in tf.rows:
         if not row or not row[0]:
             continue
         params = [tf.get(row, c[f"Param{i}"]) for i in range(1, 9)]
         maxlvl = int(float(tf.get(row, c["maxlvl"]) or 1))
+        hits: list[tuple[str, float]] = []
+
         for i in range(1, 6):
             stat = tf.get(row, c[f"passivestat{i}"])
-            if not stat.endswith("_pierce"):
+            elem = PIERCE_STAT.get(stat)
+            if not elem:
                 continue
-            ev = _eval_calc(tf.get(row, c[f"passivecalc{i}"]), params, maxlvl)
-            if ev is None:
+            calc = tf.get(row, c[f"passivecalc{i}"])
+            if calc.strip('\'"').startswith("stat("):
+                continue          # 这是"读取已有值"，不是发放
+            ev = _eval_calc(calc, params, maxlvl)
+            if ev and ev[1] > 0:
+                hits.append((elem, ev[1]))
+
+        for i in range(1, 7):
+            stat = tf.get(row, c[f"aurastat{i}"])
+            elem = AURA_DEBUFF.get(stat)
+            if not elem:
                 continue
-            # 只认"跟着技能等级长"的发放；`stat(...accr)` 那种是读取，不是发放
-            if tf.get(row, c[f"passivecalc{i}"]).strip('\'"').startswith("stat("):
-                out.setdefault(row[0], (stat, 0.0))
-                continue
-            out[row[0]] = (stat, ev[1])
+            ev = _eval_calc(tf.get(row, c[f"aurastatcalc{i}"]), params, maxlvl)
+            if ev and ev[1] < 0:
+                hits.append((elem, -ev[1]))
+
+        if hits:
+            out[row[0]] = hits
     return out
 
 
@@ -250,7 +282,7 @@ def tree_stats(ctx: Ctx, tree: dict) -> dict:
     hardest = max(present, key=lambda r: r["dmg"][20][1], default=None)
 
     grants = pierce_grants(ctx)
-    pierce = [(s, *grants[s]) for s in tree["skills"] if s in grants and grants[s][1] > 0]
+    pierce = [(s, grants[s]) for s in tree["skills"] if s in grants]
 
     return {
         "n_dmg": len(present),
@@ -313,7 +345,8 @@ def build_report(ctx: Ctx, overlay: Ctx | None) -> str:
     for t in TREES:
         st = tree_stats(active, t)
         pierce_txt = "、".join(
-            f"{s} −{v:.0f}%" for s, _stat, v in st["pierce"]
+            f"{s} " + "/".join(f"−{v:.0f}%({e})" for e, v in hits)
+            for s, hits in st["pierce"]
         ) or "—"
         best_txt = _fmt_skill(st["best"])
         changed_txt = "—"
