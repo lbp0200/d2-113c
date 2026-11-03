@@ -8,3 +8,5 @@
 {"type":"task_complete","goalId":"mw05wo5q-b5rmpb","taskId":"ass-traps-fire","evidence":"Inferno Sentry 伤害×3.2 已验证：L20 44-50→139-160，平均/法力 2.3→7.5；同档同类对比（req24/20法力：雷光守卫250 vs 喷火哨卫47）写入 p2-balance-plan §6；胜场修正为 M1 开荒（req1 Fire Trauma 143、req12 Wake of Fire 103>68）；未动 missiles.txt；59 项单测全绿","at":"2026-11-03T04:12:17.455Z"}
 {"type":"task_complete","goalId":"mw05wo5q-b5rmpb","taskId":"ama-elemental","evidence":"Fire Arrow 法力 24→8（伤害/法力 4.3→12.8）、Cold Arrow 28→12（3.2→7.4），build 已验证；误判更正：元素箭 SrcDam=128 同时吃武器+元素；取舍对照表写入 p2-balance-plan §6；弓与弩树判为 ✅已改（M1/M2/M6）；59 项单测全绿","at":"2026-11-03T04:13:33.139Z"}
 {"type":"task_started","goalId":"mw05wo5q-b5rmpb","taskId":"sor-lightning","at":"2026-11-03T04:13:52.484Z"}
+{"type":"task_complete","goalId":"mw05wo5q-b5rmpb","taskId":"sor-lightning","evidence":"三方案倍率表（现状/A -22/A' 交换）写入 p2-balance-plan §6；采用 B：Electric Mastery +278%→+200%、穿透 −25%，build 验证区域平均 2.31→2.43、归零区域 6→0；T2 检查为 3 个胜场（M2/M6/M4）未越界；59 项单测全绿","at":"2026-11-03T04:15:19.862Z"}
+{"type":"task_started","goalId":"mw05wo5q-b5rmpb","taskId":"overstrong","at":"2026-11-03T04:15:32.514Z"}
