@@ -82,6 +82,19 @@ class DocsConsistency(unittest.TestCase):
         self.assertGreaterEqual(log.stat().st_mtime, newest,
                                 "changelog.md 比补丁旧了 —— 改完补丁要重跑 tools.build")
 
+    def test_areas_report_exists_and_is_fresh(self):
+        # 「区域平均系数」这类数字曾经只写在文档里、算不回去 —— 现在必须有工具产物
+        areas = DOCS / "p2-areas.md"
+        self.assertTrue(areas.exists(), "缺 docs/p2-areas.md —— 跑 tools.p2_areas")
+        text = areas.read_text(encoding="utf-8")
+        self.assertTrue("tools.p2_areas" in text or "tools/p2_areas" in text,
+                        "p2-areas.md 应注明它由 tools/p2_areas.py 生成")
+        for f in ("Skills.txt", "MonStats.txt"):
+            src = ROOT / "mod" / "data" / "global" / "excel" / f
+            if src.exists():
+                self.assertGreaterEqual(areas.stat().st_mtime, src.stat().st_mtime,
+                                        f"p2-areas.md 比 mod/{f} 旧了 —— 重跑 tools.all")
+
     def test_audit_is_newer_than_mod(self):
         audit = DOCS / "p2-audit.md"
         self.assertTrue(audit.exists(), "缺 docs/p2-audit.md —— 跑 tools.p2_audit")

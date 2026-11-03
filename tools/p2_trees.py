@@ -74,15 +74,16 @@ TREES: list[dict] = [
          skills=["Fire Bolt", "Warmth", "Inferno", "Blaze", "Fire Ball",
                  "Fire Wall", "Enchant", "Meteor", "Fire Mastery", "Hydra"],
          wins=["M3", "M4"], status=DONE,
-         note="已修：火掌握 伤害 163%→100% + 穿透 −45%，75% 抗性处与冰系相等"),
+         note="已修：火掌握 伤害 163%→100% + 穿透 −45%，75% 抗性处与冰系相等"
+              "（倍率与区域系数见 tools/p2_areas.py）"),
     dict(cls="sor", tree="电", dmg="电",
          skills=["Charged Bolt", "Static Field", "Telekinesis", "Nova",
                  "Lightning", "Chain Lightning", "Teleport", "Thunder Storm",
                  "Energy Shield", "Lightning Mastery"],
          wins=["M2", "M6", "M4"], status=DONE,
          note="已修：电掌握 +278%→+200%，并发放 −25% 电穿透（等价交换）。"
-              "区域平均系数 2.31→2.43 几乎不变，但「完全打不动的区域」 6→0。"
-              "赢 M2/M6/M4 = 3 个场景，正好卡在 T2 边界内"),
+              "区域平均 2.31→2.39 基本不变；**归零区域仍是 6 个** —— 穿透破不了免疫，"
+              "真实收益在 50~99% 抗性段（0.38→1.05）。详见 tools/p2_areas.py"),
     dict(cls="sor", tree="冰", dmg="冰",
          skills=["Ice Bolt", "Frozen Armor", "Frost Nova", "Ice Blast",
                  "Shiver Armor", "Glacial Spike", "Blizzard", "Chilling Armor",
@@ -138,8 +139,9 @@ TREES: list[dict] = [
          skills=["Sword Mastery", "Axe Mastery", "Mace Mastery", "Pole Arm Mastery",
                  "Throwing Mastery", "Spear Mastery", "Increased Stamina", "Iron Skin",
                  "Increased Speed", "Natural Resistance"],
-         wins=[], status=HEALTHY,
-         note="纯被动（武器伤害%/防御/抗性），本身不构成「系」，只放大战斗系"),
+         wins=["M5"], status=HEALTHY,
+         note="纯被动：`Natural Resistance` L20 **+80% 全抗**、`Iron Skin` 加防御、"
+              "各武器掌握 +伤害%。它不产伤害，但把「抗性/防御」这条安全线直接拉满 → M5"),
     dict(cls="bar", tree="战吼", dmg="物理 + 支援",
          skills=["Howl", "Find Potion", "Taunt", "Shout", "Find Item", "Battle Cry",
                  "Battle Orders", "Grim Ward", "War Cry", "Battle Command"],
@@ -403,9 +405,8 @@ def build_report(ctx: Ctx, overlay: Ctx | None) -> str:
         add(f"| {k} | {cnt.get(k, 0)} |")
     add(f"| **合计** | **{len(TREES)}** |")
     add("")
-    # 纯支援系（伤害类型为「—」）不参与"死内容"判定：它本来就不产伤害
-    no_win = [f"{CLASSES[t['cls']]}·{t['tree']}" for t in TREES
-              if not t["wins"] and t["dmg"] != "—"]
+    # 不再给"纯支援系"开例外：每一系都必须指出它赢哪个场景，否则就是死内容
+    no_win = [f"{CLASSES[t['cls']]}·{t['tree']}" for t in TREES if not t["wins"]]
     add(f"- 死内容（胜场 = 0）：{'、'.join(no_win) if no_win else '无'}")
     over = [f"{CLASSES[t['cls']]}·{t['tree']}" for t in TREES if len(t["wins"]) >= 4]
     add(f"- T2 违规（胜场 ≥4）：{'、'.join(over) if over else '无'}")

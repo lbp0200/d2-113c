@@ -12,6 +12,7 @@
 - 职业技能平衡（主线工作）：**[docs/p2-balance-plan.md](docs/p2-balance-plan.md)**
   · 21 系体检表（自动生成）：[docs/p2-trees.md](docs/p2-trees.md)
   · 13 个未改动系的体检结论：[docs/p2-healthy.md](docs/p2-healthy.md)
+  · 区域元素适配度（"区域平均系数"的唯一来源）：[docs/p2-areas.md](docs/p2-areas.md)
   · 改动审计（有没有没补偿的削弱）：[docs/p2-audit.md](docs/p2-audit.md)
 - 数据报告：`docs/p1-*.md`
 

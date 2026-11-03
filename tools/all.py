@@ -26,6 +26,7 @@ STEPS = [
     ("tools.p1_immunity", "地狱免疫墙", False),
     ("tools.p1_economy", "掉落与箱子经济学", False),
     ("tools.p2_trees", "21 系体检表", False),
+    ("tools.p2_areas", "区域元素适配度（区域平均系数的唯一来源）", False),
     ("tools.p2_audit", "改动审计（数值下降对账）", False),
 ]
 
