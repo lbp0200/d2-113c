@@ -32,6 +32,17 @@ from .d2patch import Ctx
 
 ROOT = Path(__file__).resolve().parent.parent
 
+# 元素 -> (掌握 stat, 降抗 stat)。`itemstatcost.txt` 里八个 stat 全都存在。
+ELEM_STATS = {
+    "火": ("passive_fire_mastery", "passive_fire_pierce"),
+    "冰": ("passive_cold_mastery", "passive_cold_pierce"),
+    "电": ("passive_ltng_mastery", "passive_ltng_pierce"),
+    "毒": ("passive_pois_mastery", "passive_pois_pierce"),
+}
+
+# D2 的抗性下限是 -100%，所以降抗超过 100 点之后收益归零。
+RES_FLOOR = -100
+
 CLASSES = {
     "ama": "亚马逊", "sor": "法师", "nec": "死灵法师", "pal": "圣骑士",
     "bar": "野蛮人", "dru": "德鲁伊", "ass": "刺客",
@@ -118,6 +129,204 @@ def scan(ctx: Ctx) -> tuple[list[dict], list[dict], list[dict]]:
     return rows, weapon, no_damage
 
 
+# 地狱里「能不能打」的真正瓶颈不是伤害数字，而是这两个变量：
+#   1. 该元素有多少怪免疫（`MonStats.txt` 的 ResXX(H)）
+#   2. 你自带的降抗够不够（降抗是稀缺资源，见下）
+RES_STAT_TO_ELEM = {
+    "fireresist": "火", "coldresist": "冰", "lightresist": "电", "poisonresist": "毒",
+    # 掌握类技能用的是另一套 stat（只作用于自己的元素）
+    "passive_fire_pierce": "火", "passive_cold_pierce": "冰",
+    "passive_ltng_pierce": "电", "passive_pois_pierce": "毒",
+}
+
+
+def _eval_calc(calc: str, p: list[str], maxlvl: int) -> tuple[float, float] | None:
+    """只解 txt 里真实出现过的几种公式，其余返回 None（标 `—`，不猜）。"""
+    calc = calc.strip().strip('"')  # 含逗号的公式在 txt 里被引号包住，见文末说明
+
+    def num(i: int) -> float:
+        try:
+            return float(p[i - 1] or 0)
+        except (ValueError, IndexError):
+            return 0.0
+    try:
+        if calc == "-dm56":
+            return -num(5), -num(6)
+        if calc == "-min(ln34,150)":
+            return -min(num(3), 150), -min(num(3) + num(4) * (maxlvl - 1), 150)
+        if calc == "ln12":
+            return num(1), num(1) + num(2) * (maxlvl - 1)
+        if calc == "-ln12":
+            return -num(1), -(num(1) + num(2) * (maxlvl - 1))
+        if calc == "dm12":
+            return num(1), num(2)
+        if calc == "-par5":
+            return -num(5), -num(5)
+    except (ValueError, IndexError):
+        return None
+    return None
+
+
+def resistance_audit(ctx: Ctx) -> list[str]:
+    """审计「谁能让怪物抗性下降」。
+
+    这是 1.13c 里决定职业强弱的第一变量：免疫只能被降抗破，
+    而全游戏只有三个技能在降低**敌人**抗性。
+    """
+    f = ctx.load("skills.txt")
+    c = {n: f.need(n) for n in
+         ["charclass", "reqlevel", "maxlvl"] +
+         [f"Param{i}" for i in range(1, 9)] +
+         [f"aurastat{i}" for i in range(1, 7)] + [f"aurastatcalc{i}" for i in range(1, 7)] +
+         [f"passivestat{i}" for i in range(1, 4)] + [f"passivecalc{i}" for i in range(1, 4)]}
+
+    found: list[dict] = []
+    for r in f.rows:
+        if not r or not r[0]:
+            continue
+        params = [f.get(r, c[f"Param{i}"]) for i in range(1, 9)]
+        maxlvl = int(float(f.get(r, c["maxlvl"]) or 1))
+        for kind, n in (("aura", 6), ("passive", 3)):
+            for i in range(1, n + 1):
+                scol = f"aurastat{i}" if kind == "aura" else f"passivestat{i}"
+                ccol = f"aurastatcalc{i}" if kind == "aura" else f"passivecalc{i}"
+                stat = f.get(r, c[scol])
+                calc = f.get(r, c[ccol])
+                elem = RES_STAT_TO_ELEM.get(stat)
+                if not elem or not calc:
+                    continue
+                vals = _eval_calc(calc, params, maxlvl)
+                if stat.endswith("_pierce") and vals:
+                    # 掌握类的 pierce stat 是「正数表示降抗」，统一成负号再比较
+                    vals = (-vals[0], -vals[1])
+                if not vals or vals[1] >= 0:
+                    continue
+                found.append({
+                    "skill": r[0], "class": f.get(r, c["charclass"]),
+                    "req": f.get(r, c["reqlevel"]), "elem": elem,
+                    "calc": calc, "l1": vals[0], "l20": vals[1],
+                })
+
+    L = ["## 降抗审计：全游戏只有三个技能能降低「敌人」的抗性", ""]
+    L += [
+        "免疫（抗性 ≥100）只能靠降抗打破，而且对免疫怪只按 1/5 生效。",
+        "所以「自带降抗」是 1.13c 里最稀缺的资源——把 txt 里所有降抗技能列出来：",
+        "",
+        "| 技能 | 职业 | 需等级 | 作用元素 | 公式 | L1 | L20 | 破免疫上限(≈L20/5) |",
+        "|---|---|---|---|---|---:|---:|---:|",
+    ]
+    for d in sorted(found, key=lambda x: (x["l20"], x["skill"])):
+        L.append(f"| {d['skill']} | {CLASSES.get(d['class'], d['class'] or '—')} | "
+                 f"{d['req']} | {d['elem']} | `{d['calc']}` | "
+                 f"{d['l1']:+.0f}% | **{d['l20']:+.0f}%** | "
+                 f"{100 + abs(d['l20']) / 5:.0f}% 抗性 |")
+    L += [
+        "",
+        "**竖着读这一列「作用元素」**：火、电、毒 的降抗都不在法师手里，",
+        "只存在于死灵的诅咒和圣骑士的光环里。**法师自己只有冰系能降抗。**",
+        "",
+        "> ⚠ 冰掌握能不能破免疫，社区有争议（普遍认为不能，只有信念/降抗可以）。",
+        "> 上表的「破免疫上限」是按 txt 数值 + 1/5 规则算的理论值，进游戏要验。",
+        "",
+        "> 📌 解析坑：含逗号的公式在 txt 里被**双引号包住**（如 "
+        "`\"-min(ln34,150)\"`，因为文件是 CSV 风格）。读的时候要 strip 掉引号，",
+        "否则字符串比较永远不匹配。",
+        "",
+    ]
+    return L
+
+
+def _ln12(param: list[str], slvl: int) -> float:
+    """`ln12` 公式：L1 取 Param1，之后每级累加 Param2。"""
+    try:
+        p1 = float(param[0] or 0)
+        p2 = float(param[1] or 0)
+    except ValueError:
+        return 0.0
+    return p1 + p2 * (slvl - 1)
+
+
+def mastery_audit(ctx: Ctx) -> tuple[list[str], dict[str, dict[str, float]]]:
+    """审计「谁在发放 passive_* stat」。
+
+    这是 1.13c 里一个真实且纯 txt 可查的不对称：八个 stat 引擎全都支持，
+    但只有冰系的降抗真的被某个技能发出来了。
+    """
+    f = ctx.load("skills.txt")
+    ci = {n: f.need(n) for n in
+          ["Param1", "Param2", "reqlevel", "skilldesc"] +
+          [f"passivestat{i}" for i in range(1, 6)] +
+          [f"passivecalc{i}" for i in range(1, 6)]}
+    grants: dict[str, list[tuple[str, str, list[str], float]]] = {}
+    for r in f.rows:
+        if not r or not r[0]:
+            continue
+        for i in range(1, 6):
+            stat = f.get(r, ci[f"passivestat{i}"])
+            if not stat.startswith("passive"):
+                continue
+            grants.setdefault(stat, []).append(
+                (r[0], f.get(r, ci[f"passivecalc{i}"]),
+                 [f.get(r, ci["Param1"]), f.get(r, ci["Param2"])],
+                 float(f.get(r, ci["reqlevel"]) or 0))
+            )
+
+    L: list[str] = []
+    add = L.append
+    add("## 掌握结构审计：谁在给「降抗」，谁只给「加伤害」")
+    add("")
+    add("`itemstatcost.txt` 里八个 `passive_*` stat 全都存在，`skills.txt` 通过 "
+        "`passivestat1..5` + `passivecalc1..5` 发放。把发放者列出来，问题一目了然：")
+    add("")
+    add("| stat | 发放它的技能 | 公式 | L20 数值 |")
+    add("|---|---|---|---:|")
+    for elem, (m_stat, p_stat) in ELEM_STATS.items():
+        for stat in (m_stat, p_stat):
+            gs = grants.get(stat, [])
+            if gs:
+                names = "、".join(f"`{n}`" for n, *_ in gs)
+                calc = gs[0][1]
+                val = _ln12(gs[0][2], 20) if calc == "ln12" else None
+                shown = "—" if val is None else f"{val:+.0f}%"
+                add(f"| `{stat}` | {names} | `{calc}` | {shown} |")
+            else:
+                add(f"| `{stat}` | **无人发放** | — | — |")
+    add("")
+
+    vals: dict[str, dict[str, float]] = {}
+    for elem, (m_stat, p_stat) in ELEM_STATS.items():
+        dmg = pierce = 0.0
+        for stat, key in ((m_stat, "dmg"), (p_stat, "pierce")):
+            gs = grants.get(stat, [])
+            if gs and gs[0][1] == "ln12":
+                v = _ln12(gs[0][2], 20)
+                if key == "dmg":
+                    dmg = v
+                else:
+                    pierce = v
+        vals[elem] = {"dmg": dmg, "pierce": pierce}
+
+    add("### 对高抗性怪的**实际**伤害倍率（掌握满级 20 级）")
+    add("")
+    add("倍率 = `(1 + 伤害加成%) × (1 - 最终抗性/100)`，最终抗性下限 -100%。")
+    add("")
+    add("| 怪物抗性 | " + " | ".join(f"{e}系" for e in ELEM_STATS) + " |")
+    add("|---|" + "---:|" * len(ELEM_STATS))
+    for res in (0, 50, 75, 90, 99):
+        cells = []
+        for elem in ELEM_STATS:
+            v = vals[elem]
+            final = max(RES_FLOOR, res - v["pierce"])
+            cells.append(f"{(1 + v['dmg'] / 100) * (1 - final / 100):.2f}×")
+        add(f"| {res}% | " + " | ".join(cells) + " |")
+    add("")
+    add("**读法**：抗性 0% 时火/电靠「加伤害」是赢的；一旦怪物抗性上到 75% 以上，")
+    add("只剩冰系靠降抗还能维持输出。抗性越高差距越大——这就是「地狱里火系打不动」的数学原因。")
+    add("")
+    return L, vals
+
+
+
 def build_report(ctx: Ctx, only_class: str | None) -> str:
     rows, weapon, no_damage = scan(ctx)
     L: list[str] = []
@@ -171,6 +380,10 @@ def build_report(ctx: Ctx, only_class: str | None) -> str:
             add(f"- `{r['skill']}`：{r['dmg'][20][0]:.0f}-{r['dmg'][20][1]:.0f}，"
                 f"需等级 {r['req']:.0f}，法力 {r['mana']:.0f}")
         add("")
+
+    audit, _ = mastery_audit(ctx)
+    L += audit
+    L += resistance_audit(ctx)
 
     if weapon:
         add("## 武器百分比技能（伤害取决于武器，`skills.txt` 只有百分比）")
