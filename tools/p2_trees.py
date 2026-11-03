@@ -167,8 +167,10 @@ TREES: list[dict] = [
          skills=["Fire Trauma", "Shock Field", "Blade Sentinel", "Charged Bolt Sentry",
                  "Wake of Fire Sentry", "Blade Fury", "Lightning Sentry",
                  "Inferno Sentry", "Death Sentry", "Blade Shield"],
-         wins=["M2"], status=TODO,
-         note="雷光守卫 + 亡者守卫（尸爆）撑起主线；**火陷阱半系是死内容**"),
+         wins=["M1", "M2"], status=DONE,
+         note="已修：Inferno Sentry 伤害 ×3.2（同档同类陷阱只有雷光守卫的 1/5，44-50→139-160）。"
+              "火陷阱的胜场其实在**开荒期**（req 1 的 Fire Trauma、req 12 的 Wake of Fire 都强于同档电陷阱），"
+              "高等级段靠雷光守卫 + 亡者守卫（尸爆）"),
     dict(cls="ass", tree="暗影", dmg="—",
          skills=["Claw Mastery", "Psychic Hammer", "Quickness", "Weapon Block",
                  "Cloak of Shadows", "Fade", "Shadow Warrior", "Mind Blast", "Venom",

@@ -119,3 +119,29 @@ for _col in ["EMin", "EMax"] + [
     f"{pre}Lev{i}" for pre in ("EMin", "EMax") for i in range(1, 6)
 ]:
     _pn.mul(_col, 1.25, ndigits=0)
+
+
+# --------------------------------------------------------------- 刺客火陷阱
+# 诊断：把同档陷阱摆一起就看出问题了 —— 同一层、同样 20 点法力：
+#
+#   Lightning Sentry（req 24, 20 法力）L20 平均 250
+#   Inferno Sentry  （req 24, 20 法力）L20 平均  47   ← 只有 1/5
+#
+# 两个都是"放一个哨卫让它自己打"，需求等级和法力完全一样，
+# 单次命中伤害却差 5 倍 —— 这不是设计取舍，是没调平。
+#
+# 中低档反而没问题：req 12 的 Wake of Fire（平均 103）比同档的
+# Charged Bolt Sentry（平均 68）还强；req 1 的 Fire Trauma（平均 143）
+# 是刺客开荒期的主力。**所以火陷阱的胜场在 M1 开荒，死的只有 Inferno Sentry。**
+#
+# 改动：Inferno Sentry 伤害 ×3.2 → L20 约 141-160。
+# 故意**不**追平雷光守卫：喷火哨卫是持续多段，单次命中低是合理的，
+# 但 1/5 的差距已经低到"这个技能不存在"的程度。具体手感进游戏要验。
+_isy = patch(
+    "skills.txt",
+    why="P2-刺客火陷阱：Inferno Sentry 伤害 ×3.2（同档同类陷阱里只有雷光守卫的 1/5）",
+).where("skill", matches(r"^Inferno Sentry$"))
+for _col in ["EMin", "EMax"] + [
+    f"{pre}Lev{i}" for pre in ("EMin", "EMax") for i in range(1, 6)
+]:
+    _isy.mul(_col, 3.2, ndigits=0)

@@ -36,20 +36,20 @@
 | `*Param3 Description` | 1 | `Fire Mastery`: (空) → Enemy fire resist reduction |
 | `*Param4 Description` | 1 | `Fire Mastery`: (空) → Enemy fire resist reduction per level |
 | `mana` | 3 | `Armageddon`: 35 → 25；`Volcano`: 25 → 16；`Poison Nova`: 20 → 16 |
-| `EMin` | 3 | `Armageddon`: 25 → 31；`Volcano`: 8 → 10；`Poison Nova`: 16 → 20 |
-| `EMax` | 3 | `Armageddon`: 75 → 94；`Volcano`: 10 → 13；`Poison Nova`: 29 → 36 |
-| `EMinLev1` | 3 | `Armageddon`: 15 → 19；`Volcano`: 2 → 3；`Poison Nova`: 4 → 5 |
-| `EMinLev2` | 3 | `Armageddon`: 20 → 25；`Volcano`: 4 → 5；`Poison Nova`: 6 → 8 |
-| `EMinLev3` | 3 | `Armageddon`: 25 → 31；`Volcano`: 6 → 8；`Poison Nova`: 9 → 11 |
-| `EMinLev4` | 3 | `Armageddon`: 31 → 39；`Volcano`: 8 → 10；`Poison Nova`: 14 → 18 |
-| `EMinLev5` | 3 | `Armageddon`: 38 → 48；`Volcano`: 11 → 14；`Poison Nova`: 16 → 20 |
-| `EMaxLev1` | 3 | `Armageddon`: 16 → 20；`Volcano`: 2 → 3；`Poison Nova`: 4 → 5 |
-| `EMaxLev2` | 3 | `Armageddon`: 22 → 28；`Volcano`: 4 → 5；`Poison Nova`: 6 → 8 |
-| `EMaxLev3` | 3 | `Armageddon`: 27 → 34；`Volcano`: 6 → 8；`Poison Nova`: 9 → 11 |
-| `EMaxLev4` | 3 | `Armageddon`: 34 → 42；`Volcano`: 8 → 10；`Poison Nova`: 14 → 18 |
-| `EMaxLev5` | 3 | `Armageddon`: 40 → 50；`Volcano`: 13 → 17；`Poison Nova`: 16 → 20 |
+| `EMin` | 4 | `Armageddon`: 25 → 31；`Volcano`: 8 → 10；`Poison Nova`: 16 → 20；…另 1 行 |
+| `EMax` | 4 | `Armageddon`: 75 → 94；`Volcano`: 10 → 13；`Poison Nova`: 29 → 36；…另 1 行 |
+| `EMinLev1` | 4 | `Armageddon`: 15 → 19；`Volcano`: 2 → 3；`Poison Nova`: 4 → 5；…另 1 行 |
+| `EMinLev2` | 4 | `Armageddon`: 20 → 25；`Volcano`: 4 → 5；`Poison Nova`: 6 → 8；…另 1 行 |
+| `EMinLev3` | 4 | `Armageddon`: 25 → 31；`Volcano`: 6 → 8；`Poison Nova`: 9 → 11；…另 1 行 |
+| `EMinLev4` | 4 | `Armageddon`: 31 → 39；`Volcano`: 8 → 10；`Poison Nova`: 14 → 18；…另 1 行 |
+| `EMinLev5` | 4 | `Armageddon`: 38 → 48；`Volcano`: 11 → 14；`Poison Nova`: 16 → 20；…另 1 行 |
+| `EMaxLev1` | 4 | `Armageddon`: 16 → 20；`Volcano`: 2 → 3；`Poison Nova`: 4 → 5；…另 1 行 |
+| `EMaxLev2` | 4 | `Armageddon`: 22 → 28；`Volcano`: 4 → 5；`Poison Nova`: 6 → 8；…另 1 行 |
+| `EMaxLev3` | 4 | `Armageddon`: 27 → 34；`Volcano`: 6 → 8；`Poison Nova`: 9 → 11；…另 1 行 |
+| `EMaxLev4` | 4 | `Armageddon`: 34 → 42；`Volcano`: 8 → 10；`Poison Nova`: 14 → 18；…另 1 行 |
+| `EMaxLev5` | 4 | `Armageddon`: 40 → 50；`Volcano`: 13 → 17；`Poison Nova`: 16 → 20；…另 1 行 |
 
-理由：P2-德鲁伊火系：Armageddon 法力 35→25、伤害 ×1.25；P2-德鲁伊火系：Volcano 法力 25→16、伤害 ×1.30；P2-死灵毒系：Poison Nova 法力 20→16、毒速率 ×1.25（定位 M2 全屏清场）；P2-法师火系：火掌握 伤害163%→100%，并发放 -45% 火穿透（填 passive_fire_pierce 的空口）
+理由：P2-刺客火陷阱：Inferno Sentry 伤害 ×3.2（同档同类陷阱里只有雷光守卫的 1/5）；P2-德鲁伊火系：Armageddon 法力 35→25、伤害 ×1.25；P2-德鲁伊火系：Volcano 法力 25→16、伤害 ×1.30；P2-死灵毒系：Poison Nova 法力 20→16、毒速率 ×1.25（定位 M2 全屏清场）；P2-法师火系：火掌握 伤害163%→100%，并发放 -45% 火穿透（填 passive_fire_pierce 的空口）
 
 ## TreasureClassEx.txt
 

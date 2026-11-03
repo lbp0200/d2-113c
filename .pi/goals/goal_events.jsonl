@@ -3,3 +3,5 @@
 {"type":"task_started","goalId":"mw05wo5q-b5rmpb","taskId":"baseline","at":"2026-11-03T04:02:59.872Z"}
 {"type":"task_complete","goalId":"mw05wo5q-b5rmpb","taskId":"baseline","evidence":"tools/p2_trees.py + docs/p2-trees.md 生成 21 行体检表（伤害类型/技能数/胜场/自降抗/主输出/改动列/状态）；8 项单测校验手写树归属，总计 55 项全绿；法师火(✅)与德鲁伊火(✅)的改动列与 changelog 一致","at":"2026-11-03T04:06:08.245Z"}
 {"type":"task_started","goalId":"mw05wo5q-b5rmpb","taskId":"nec-poison","at":"2026-11-03T04:06:23.292Z"}
+{"type":"task_complete","goalId":"mw05wo5q-b5rmpb","taskId":"nec-poison","evidence":"Poison Nova 法力 20→16、速率×1.25：总量 625-666 → 797-847，总量/法力 32.3 → 51.4（已 build 验证）；p1-skills 新增毒系速率×帧自动表并说明语义；毒系定位 M2（全屏、放完就走）对骨系 M3；p2-trees 显示 ✅已改；59 项单测全绿","at":"2026-11-03T04:10:29.101Z"}
+{"type":"task_started","goalId":"mw05wo5q-b5rmpb","taskId":"ass-traps-fire","at":"2026-11-03T04:10:37.109Z"}
