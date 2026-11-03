@@ -74,6 +74,12 @@ NORMALIZE = {
     "lifedrainmindam": "lifesteal", "manadrainmindam": "manasteal",
     "damageresist": "dr", "normal_damage_reduction": "dr",
     "item_maxdamage_percent": "ed", "item_manaafterkill": "mana_kill",
+    "item_explosivearrow": "free_skill", "item_nonclassskill": "oskill",
+    "passive_fire_mastery": "elem_mastery", "passive_ltng_mastery": "elem_mastery",
+    "passive_cold_mastery": "elem_mastery", "passive_pois_mastery": "elem_mastery",
+    "passive_fire_pierce": "elem_pierce", "passive_ltng_pierce": "elem_pierce",
+    "passive_cold_pierce": "elem_pierce", "passive_pois_pierce": "elem_pierce",
+    "item_numsockets": "sock",
     "swing1": "ias", "swing2": "ias", "swing3": "ias",
     "cast1": "fcr", "cast2": "fcr", "cast3": "fcr",
     "balance1": "fhr", "balance2": "fhr", "balance3": "fhr",
@@ -108,36 +114,31 @@ STRONG: dict[str, float] = {
     "item_magicbonus": 20, "item_goldbonus": 100,
     # 提高抗性上限是"防御身份"，不是边角属性
     "maxfireresist": 3, "maxcoldresist": 3, "maxlightresist": 3, "maxpoisonresist": 3,
+    "sock": 1, "elem_pierce": 5, "elem_mastery": 10, "indestruct": 1,
+    # 「对不死/恶魔加倍伤害」和「受伤转法力」都是真实的构筑动机，不是边角属性
+    "item_undeaddamage_percent": 50, "item_demondamage_percent": 50,
+    "item_damagetomana": 30,
+    # 「自带某某技能」= 直接给一个能力，低阶装备的常见身份
+    "free_skill": 1, "oskill": 1,
 }
 
 # 这些槽位不参与判定：任务物品、护身符（护身符不和任何装备抢槽位）
 SKIP_SLOTS = {"quest", "cm1", "cm2", "cm3", "lcha", "mcha", "scha"}
 
 
-# 盾牌是例外：圣骑士的 Smite 用盾牌伤害，所以盾上的 `+X% 伤害` 不是死属性。
-SHIELD_SLOTS = {"shie"}
-
-
 def dead_stats(item: dict) -> list[str]:
-    """这件装备上「写了但不起作用」的属性 —— 只收**无争议**的几条。
+    """**存疑**的槽位错配（不是定论）。
 
-    - `+X% 伤害`（`ed`）在 头盔/手套/靴子/腰带/戒指/项链 上无效
-      （武器上有效；**盾牌上有效**，因为 Smite 用盾牌伤害 —— 这是很多人踩过的坑）
-    - `+X% 防御`（`ed_def`）在武器上无效
-    - 元素附加伤害（`elem_dmg`，如 `dmg-fire`）只在**武器**上生效；
-      物理附加伤害（`add_dmg`，`+min/max damage`）任何槽位都生效
+    只保留一条：武器上的 `+X% 防御`（`ac%`）—— 武器本身没有防御值。
+    但即便这条也不确定：`item_armor_percent` 可能是全局的（会被算进总防御），
+    所以这里只用于挑出"值得进游戏看一眼"的装备，**不作为改动依据**。
+
+    历史教训：第一版把 `dmg%`/元素附加伤害在护甲上也当成死的，列了 43 件，
+    但 Fortitude（衣服 +300% ED）、Steelrend（手套 +60% ED）都证明那是全局生效的。
     """
-    out = []
-    slot = (item["slot"] or "").lower()
-    if item["kind"] == "armor" and slot not in SHIELD_SLOTS and "ed" in item["stats"]:
-        out.append("ed")
-    if item["kind"] == "misc" and "ed" in item["stats"]:
-        out.append("ed")
     if item["kind"] == "weapon" and "ed_def" in item["stats"]:
-        out.append("ed_def")
-    if item["kind"] != "weapon" and "elem_dmg" in item["stats"]:
-        out.append("elem_dmg")
-    return sorted(out)
+        return ["ed_def"]
+    return []
 
 
 def strong_hits(item: dict) -> list[str]:
@@ -182,6 +183,14 @@ def load_props() -> tuple[dict[str, list[str]], set[str]]:
                 continue
             if func in ACCEPT_FUNCS and stat:
                 stats.append(stat)
+            elif func in {"5", "6"}:
+                stats.append("add_dmg")          # dmg-min / dmg-max
+            elif func == "14":
+                stats.append("sock")             # 孔数
+            elif func == "20":
+                stats.append("indestruct")
+            elif func == "17":
+                stats.append("elem_len")         # 元素持续时间（冷/毒）
             elif func in {"15", "16"}:
                 # 元素伤害（firemindam…）只在武器上生效；
                 # 物理附加伤害（mindamage/maxdamage，来自 dmg-norm/dmg-min/dmg-max）
@@ -399,24 +408,44 @@ def build_report(items: list[dict], skipped: list[str]) -> str:
         add("无。")
     add("")
 
-    cand_c = [it for it in judged if dead_stats(it)]
-    add("## C 类：属性里有**死的**（在错误的槽位上）")
+    # ---- 参考类：同槽位同需求段内没有任何一项最强
+    no_fame = []
+    for slot, lst in by_slot.items():
+        if slot in SKIP_SLOTS:
+            continue
+        for a in lst:
+            peers = [b for b in lst if b["req"] <= a["req"] and b is not a]
+            if not any(st in STRONG and v >= STRONG[st]
+                       and all(p["stats"].get(st, 0) <= v + 1e-9 for p in peers)
+                       for st, v in a["stats"].items()):
+                no_fame.append(a)
+    add("## 参考：在**本槽位同需求段**内没有任何一项最强的（不要直接当结论）")
     add("")
-    add("- `+X% 伤害`（`dmg%`）在武器上有效；**盾牌上也有效**（圣骑士 Smite 用盾牌伤害）；")
-    add("  写在头盔/手套/靴子/腰带/戒指/项链上就是白给。")
-    add("- 元素附加伤害（`dmg-fire` 等）只在武器上生效；`+min/max damage` 任何槽位都生效。")
-    add("- `+X% 防御`（`ac%`）在武器上无效。")
+    add(f"共 {len(no_fame)} 件。**这一类的参考价值有限**：D2 装备的价值常常来自"
+        "**属性的组合**（例如 `Lightsabre` 单看每一项都不最强，但\"攻速+闪电伤害+吸蓝\""
+        "合在一起就是它的理由）。所以这里只当线索，不当判定。")
     add("")
-    add("这一类不需要判断，只需要核对 —— 是最客观的「垃圾」证据。")
+    add("| 装备 | 需求 | 槽位 | 它够强的属性（但都不是最强） |")
+    add("|---|---:|---|---|")
+    for it in sorted(no_fame, key=lambda x: -x["req"])[:30]:
+        strong = [f"{k}={v:.0f}" for k, v in sorted(it["stats"].items())
+                  if k in STRONG and v >= STRONG[k]]
+        add(f"| {it['name']} | {it['req']:.0f} | {it['slot']} | {'、'.join(strong) or '—'} |")
     add("")
-    if cand_c:
-        add("| 装备 | 需求 | 槽位 | 死属性 | 它原本想要的属性 |")
-        add("|---|---:|---|---|---|")
-        for it in sorted(cand_c, key=lambda x: x["req"]):
-            add(f"| {it['name']} | {it['req']:.0f} | {it['slot']} | "
-                f"**{'、'.join(dead_stats(it))}** | {'、'.join(it['shown'][:4])} |")
-    else:
-        add("无。")
+
+    add("## ⚠️ 关于「死属性」：这一类**做错过，已经删掉**")
+    add("")
+    add("第一版把「`+X% 伤害` / 附加元素伤害 写在护甲上」当成死属性，列了 43 件。**那是错的**：")
+    add("")
+    add("- 反例一：**Fortitude** 在**衣服**上给 `+300% 强化伤害`，是全身最重要的物理增伤之一")
+    add("- 反例二：**Steelrend**（手套）的招牌就是 `+30~60% 强化伤害`")
+    add("- 反例三：带 ED 的珠宝可以镶在头盔/衣服里并照常生效")
+    add("")
+    add("这些 stat（`item_maxdamage_percent`、元素附加伤害）都是**全局**的，")
+    add("写在哪个槽位都生效 —— 只有「武器上的 `ac%`」这一类还存疑（武器本身没有防御值）。")
+    add("")
+    add("所以本工具**不再输出「死属性」结论**。要判断一件装备的某条属性是不是白给，")
+    add("唯一可靠的办法是进游戏实测（这正是 `TODO.md` 里那一串待验证项的意义）。")
     add("")
 
     add("## 全表（按槽位）")
@@ -437,19 +466,23 @@ def build_report(items: list[dict], skipped: list[str]) -> str:
                 f"{'、'.join(it['shown'][:4])} | "
                 f"{'、'.join(it['unmeasured'][:3]) or '—'} |  |")
         add("")
-    add("## 怎么用这份表（下一步）")
+    add("## 结论与下一步")
     add("")
-    add("**第一批要动的不是「垃圾暗金」，而是「死属性」。** 理由：")
+    add("**暗金层比预想的健康。** 380 件里：")
     add("")
-    add("1. **客观** —— 死属性不需要判断「有没有人用」，规则在引擎里是确定的")
-    add("2. **等价交换**（E3）—— 白给的属性换成起作用的属性，不改变强度分布，不造新 BiS")
-    add("3. **风险最低** —— 不动这件装备的核心功能（比如 Magefist 的 FCR/火技能完全不动）")
+    add("- **A 类 0 件**：没有任何一件被同槽位的另一件在纯数值上完全覆盖 → 没有"重复设计"")
+    add("- **B 类 4 件**：`War Bonnet` / `Lenyms Cord` / `Coif of Glory` / `The Centurion`，")
+    add("  而且**全部是 req ≤ 14 的低级件** —— 它们的身份就是"你 3 级时只有这个"，")
+    add("  严格说并不算垃圾，只算过渡件")
+    add("- 参考类 19 件：单看每一项都不最强，但 D2 的价值常常来自组合，所以只是线索")
     add("")
-    add("注意 **死属性 ≠ 垃圾**：`Magefist` 有死属性（手套上的火伤害），"
-        "但它是法系手套的常用件。改它只是把白给的那一条换掉，不是重做。")
+    add("所以「某件暗金就是垃圾，谁也用不上」这个直觉，在**暗金单品**上成立的不多。")
+    add("更值得动的地方按可疑度排序：")
     add("")
-    add("第二批才是 B 类「没有任何强属性」的那几件 —— 那时候才需要回答 E1："
-        "给它一个身份（谁、什么阶段、为了什么），填不出来就别改。")
+    add("1. **套装单件**：穿不齐就是一堆废属性 —— 这类"垃圾"是结构性的，暗金没有这个问题")
+    add("2. **低阶符文之语 vs 中阶暗金**：1.13 的低阶 RW（`Honor`/`King's Grace`/`Spirit` 等）")
+    add("   让很多 30~60 级暗金失去理由，而这是**跨表**对比，本工具还没做")
+    add("3. **真的没有身份但等级高的**：需要人工按 E1 逐个判（本轮没找到，但可能是我漏了）")
     add("")
     return "\n".join(L).rstrip() + "\n"
 

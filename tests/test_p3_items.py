@@ -38,31 +38,40 @@ class ItemCollection(unittest.TestCase):
 
 
 class DeadStats(unittest.TestCase):
-    """死属性规则：写错槽位就是白给。盾牌是例外（Smite 用盾牌伤害）。"""
+    """「死属性」这一类**做错过**，这里的测试锁的是更正后的结论。
+
+    教训：`dmg%`（`item_maxdamage_percent`）和元素附加伤害是**全局**的，
+    写在护甲上照样生效 —— Fortitude（衣服 +300% ED）、Steelrend（手套 +60% ED）、
+    以及可以镶在任意部位的 ED 珠宝都是反例。第一版把它们判成死属性，列了 43 件，是错的。
+    """
 
     @staticmethod
     def item(kind: str, slot: str, **stats) -> dict:
         return {"name": "X", "kind": kind, "slot": slot, "stats": dict(stats)}
 
-    def test_ed_on_helm_is_dead(self):
-        self.assertEqual(dead_stats(self.item("armor", "helm", ed=30)), ["ed"])
+    def test_ed_on_helm_is_not_dead(self):
+        # Fortitude 的 +300% ED 就在衣服上，照样生效
+        self.assertEqual(dead_stats(self.item("armor", "helm", ed=30)), [])
 
-    def test_ed_on_shield_is_alive(self):
-        # 圣骑士 Smite 用盾牌伤害，所以盾上的 dmg% 有效
+    def test_ed_on_gloves_is_not_dead(self):
+        # Steelrend 的招牌就是手套上的 +30~60% ED
+        self.assertEqual(dead_stats(self.item("armor", "glov", ed=60)), [])
+
+    def test_elemental_damage_off_weapon_is_not_dead(self):
+        # 离手附加伤害同样生效
+        self.assertEqual(dead_stats(self.item("armor", "boot", elem_dmg=6)), [])
+
+    def test_ed_on_shield_is_not_dead(self):
+        # 圣骑士 Smite 用盾牌伤害
         self.assertEqual(dead_stats(self.item("armor", "shie", ed=30)), [])
 
-    def test_ed_on_weapon_is_alive(self):
-        self.assertEqual(dead_stats(self.item("weapon", "swor", ed=200)), [])
-
-    def test_ed_def_on_weapon_is_dead(self):
-        self.assertEqual(dead_stats(self.item("weapon", "staf", ed_def=50)), ["ed_def"])
-
-    def test_elemental_damage_off_weapon_is_dead(self):
-        self.assertEqual(dead_stats(self.item("armor", "glov", elem_dmg=6)), ["elem_dmg"])
-
     def test_added_physical_damage_anywhere_is_alive(self):
-        # +min/max damage 在护身符/戒指上也生效，不能算死
         self.assertEqual(dead_stats(self.item("misc", "ring", add_dmg=15)), [])
+
+    def test_only_weapon_ac_percent_is_flagged(self):
+        # 唯一保留的那条「存疑」：武器没有防御值，所以 ac% 可能白给
+        self.assertEqual(dead_stats(self.item("weapon", "staf", ed_def=50)), ["ed_def"])
+        self.assertEqual(dead_stats(self.item("armor", "tors", ed_def=50)), [])
 
 
 class StrongBar(unittest.TestCase):
