@@ -8,6 +8,7 @@
 - 路线与决策记录：[PLAN.md](PLAN.md)
 - 游戏到手后的执行顺序：[docs/runbook.md](docs/runbook.md)
 - 职业技能平衡（主线工作）：**[docs/p2-balance-plan.md](docs/p2-balance-plan.md)**
+  · 21 系体检表（自动生成）：[docs/p2-trees.md](docs/p2-trees.md)
 - 数据报告：`docs/p1-*.md`
 
 ## 工作流
