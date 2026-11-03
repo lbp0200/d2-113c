@@ -17,6 +17,8 @@
 
 | 列 | 改动行数 | 示例 |
 |---|---:|---|
+| `Picks` | 79 | `Act 1 (H) Melee A`: 1 → 2；`Act 1 (H) Melee B`: 1 → 2；`Act 2 (H) Melee A`: 1 → 2；…另 76 行 |
 | `Prob(Good)` | 43 | `Act 1 (H) Chest A`: 2 → 0；`Act 1 (H) Chest B`: 2 → 0；`Act 1 (H) Chest C`: 2 → 0；…另 40 行 |
+| `Item` | 15 | `Act 1 (H) Super A`: Act 1 (H) Uitem A → Act 1 (H) Equip A；`Act 1 (H) Super B`: Act 1 (H) Uitem B → Act 1 (H) Equip B；`Act 1 (H) Super C`: Act 1 (H) Uitem C → Act 1 (H) Equip C；…另 12 行 |
 
-理由：L1 地狱箱子不再产符文：符文路径全部落到战斗源上；L1 暗金怪 Good 权重 4→8（打硬目标的额外回报）；L1 精英怪 Good 权重 3→6（打硬目标的额外回报）
+理由：L1 地狱箱子不再产符文：符文路径全部落到战斗源上；L1 暗金怪 Good 权重 4→8（打硬目标的额外回报）；L1 精英怪 Good 权重 3→6（打硬目标的额外回报）；L1 超箱（Super A/B/C）不再产符文：Uitem→Equip；L1b 打怪掉落像翻箱子：Picks 1→2；L1b 牛场 Picks 1→2

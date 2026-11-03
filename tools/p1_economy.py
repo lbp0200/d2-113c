@@ -28,7 +28,8 @@ ROOT = Path(__file__).resolve().parent.parent
 
 # 路线 → (代表 TC, 每小时事件数)。事件密度是**假设**，写在报告里让人自己改。
 ROUTES: list[tuple[str, str, float]] = [
-    ("LK 超级箱子（6 箱/趟、15 秒/趟）", "Act 3 (H) Chest B", 6 * 3600 / 15),
+    ("LK 超箱 6 个（15 秒/趟）", "Act 3 (H) Super A", 6 * 3600 / 15),
+    ("普通箱子（同趟顺手开）", "Act 3 (H) Chest B", 6 * 3600 / 15),
     ("牛场清场（约 50 杀/秒上限的 1/6）", "Cow (H)", 3000),
     ("白怪清场（Act5 近战）", "Act 5 (H) H2H A", 3000),
     ("精英怪（一场 8 群、5 分钟一趟）", "Act 5 (H) Champ A", 96),

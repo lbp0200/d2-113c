@@ -434,6 +434,31 @@ class Selection:
         return self
 
     @_guarded
+    def rename_item(self, item_pattern: str, new_item):
+        """把行里「条目名匹配 item_pattern」的那一项改成 new_item（TC 结构手术用）。
+
+        new_item 可以是字符串，也可以是 `old -> new` 的函数（保留幕号/等级字母）。
+        """
+        h = self.tf.header
+        slots = [h.index(f"Item{i}") for i in range(1, 128) if f"Item{i}" in h]
+        rx = re.compile(item_pattern)
+        for i in self.indices:
+            row = self.tf.rows[i]
+            for ii in slots:
+                if ii >= len(row) or not rx.search(row[ii]):
+                    continue
+                old = row[ii]
+                new = new_item(old) if callable(new_item) else new_item
+                if new is None or new == old:
+                    continue
+                self.tf.put(row, ii, new)
+                self.touched += 1
+                self.patch.ctx.record(
+                    Change(self.patch.filename, self._key_of(i), "Item", old, new, self.patch.why)
+                )
+        return self
+
+    @_guarded
     def swap(self, a: str, b: str):
         """两列互换（少数情况下有用）。"""
         ia, ib = self.tf.need(a), self.tf.need(b)

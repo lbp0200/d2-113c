@@ -55,6 +55,17 @@ patch(
     "Treasure Class", matches(r"^Act \d \(H\) Chest [ABC]$")
 ).item_prob(r"Good$", 0, label="Prob(Good)")
 
+# 1b. **超箱**（LK 那 6 个）走的是 `Act N (H) Super A/B/C`，不是 `Chest A/B/C`！
+#     它们 Picks=-4 保证 4 次抽取，引用 Uitem + Cpot → Good 12.9%/箱。
+#     而下面第 3 条把 Uitem 的 Good 从 4 提到 8，会**反向buff超箱**。
+#     所以这里把超箱的 Uitem 引用换成 Equip：超箱继续给装备+药水，但不产符文。
+patch(
+    "treasureclassex.txt",
+    why="L1 超箱（Super A/B/C）不再产符文：Uitem→Equip",
+).where(
+    "Treasure Class", matches(r"^Act \d \(H\) Super [ABC]$")
+).rename_item(r"Uitem", lambda s: s.replace("Uitem", "Equip"))
+
 # 2. 精英怪：Good 权重 3 → 6（点缀，不是主来源）
 patch(
     "treasureclassex.txt",
