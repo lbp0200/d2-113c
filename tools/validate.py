@@ -24,6 +24,12 @@ from pathlib import Path
 from . import d2txt
 from .d2patch import COMPOSITE_KEYS, KEY_COLS, row_key
 
+# 这些表的 `index` **允许重复**，而且原版就重复：
+#   uniqueitems.txt —— Azurewrath 有 1.09 / 1.10 两个版本，Rainbow Facet 有 8 种变体
+#   setitems.txt    —— 同名件在极端情况下也可能重复
+# 所以对它们只统计、不报错。注意：这也意味着按 index 打的补丁会命中所有同名行。
+ALLOW_DUP_KEYS = {"uniqueitems.txt", "setitems.txt"}
+
 ROOT = Path(__file__).resolve().parent.parent
 
 # 逐表声明"应该是数字"的列；先留空，P1 分析时按需补充。
@@ -111,6 +117,7 @@ def validate(target: Path, baseline: Path | None) -> tuple[int, int]:
             else:
                 seen: dict[str, int] = {}
                 phantom = 0
+                dup_ok = 0
                 for i, row in enumerate(tf.rows):
                     # D2 的数据表里常有一些"空壳行"：前几列全空、只有末尾的元数据列有值
                     # （例如 TreasureClassEx.txt 最后一行只有 `Term`=0）。那不是错误。
@@ -122,11 +129,16 @@ def validate(target: Path, baseline: Path | None) -> tuple[int, int]:
                         warn(f"{name}: 第 {i + 2} 行主键为空")
                         continue
                     if v in seen:
-                        err(f"{name}: 主键 {v!r} 重复（第 {seen[v] + 2} 行和第 {i + 2} 行）")
+                        if name.lower() in ALLOW_DUP_KEYS:
+                            dup_ok += 1
+                        else:
+                            err(f"{name}: 主键 {v!r} 重复（第 {seen[v] + 2} 行和第 {i + 2} 行）")
                     else:
                         seen[v] = i
                 if phantom:
                     print(f"  · {phantom} 个空壳行（忽略）")
+                if dup_ok:
+                    print(f"  · {dup_ok} 行主键重复（原版允许多版本变体，忽略）")
 
         # 4. 数值列
         for col in NUMERIC_COLS.get(name.lower(), []):

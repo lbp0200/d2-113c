@@ -53,6 +53,19 @@
 
 理由：P3 中间层降抗：Radiance 的『光环半径 +5』换成『信念 L3（−40%）』（补噩梦→地狱之间的降抗空档，见 docs/p3-runes-plan.md）；P3 天底重做：去掉两条负面（light -3 / gold -33），换成 +法力 与 回蓝；P3 毒液重做：两个凑数充能 → pierce-pois 15~20 + pois-len -50 帧（毒更快跳完，总量不变；不超死亡之网）
 
+## SetItems.txt
+
+| 列 | 改动行数 | 示例 |
+|---|---:|---|
+| `prop6` | 1 | `Magnus' Skin`: (空) → balance2 |
+| `min6` | 1 | `Magnus' Skin`: (空) → 20 |
+| `max6` | 1 | `Magnus' Skin`: (空) → 20 |
+| `prop7` | 1 | `Magnus' Skin`: (空) → hp |
+| `min7` | 1 | `Magnus' Skin`: (空) → 30 |
+| `max7` | 1 | `Magnus' Skin`: (空) → 30 |
+
+理由：P3 Magnus' Skin：补 20% FHR + hp 30
+
 ## Skills.txt
 
 | 列 | 改动行数 | 示例 |
@@ -93,3 +106,21 @@
 | `Prob(Good)` | 28 | `Act 1 (H) Citem A`: 3 → 40；`Act 1 (H) Citem B`: 3 → 40；`Act 1 (H) Citem C`: 3 → 40；…另 25 行 |
 
 理由：L1 暗金怪 Good 4→20：维持「打硬目标更值」的层级；L1 精英怪 Good 3→40：维持「打硬目标更值」的层级（白怪 Picks=4 后要跟上）；L1b 打怪掉落像翻箱子：Picks 1→4；L1b 牛场 Picks 1→4
+
+## UniqueItems.txt
+
+| 列 | 改动行数 | 示例 |
+|---|---:|---|
+| `prop7` | 4 | `Steelpillar`: (空) → ease；`Venomsward`: (空) → regen；`Heavenly Garb`: (空) → hp；…另 1 行 |
+| `min7` | 4 | `Steelpillar`: (空) → -25；`Venomsward`: (空) → 15；`Heavenly Garb`: (空) → 30；…另 1 行 |
+| `max7` | 4 | `Steelpillar`: (空) → -25；`Venomsward`: (空) → 15；`Heavenly Garb`: (空) → 30；…另 1 行 |
+| `prop6` | 3 | `Venomsward`: (空) → hp；`Heavenly Garb`: att-undead → att-demon；`Gravepalm`: (空) → crush |
+| `min6` | 3 | `Venomsward`: (空) → 40；`Gravepalm`: (空) → 10；`Razortine`: 30 → 60 |
+| `max6` | 3 | `Venomsward`: (空) → 60；`Gravepalm`: (空) → 10；`Razortine`: 50 → 80 |
+| `prop5` | 1 | `Heavenly Garb`: dmg-undead → dmg-demon |
+| `min3` | 1 | `Hawkmail`: 15 → 30 |
+| `max3` | 1 | `Hawkmail`: 15 → 30 |
+| `min5` | 1 | `Hawkmail`: 10 → 25 |
+| `max5` | 1 | `Hawkmail`: 10 → 25 |
+
+理由：P3 Gravepalm：补 crush 10（低阶 CB 手套）；P3 Hawkmail：冰抗 15→30、跑速 10→25；P3 Heavenly Garb：对不死 → 对恶魔 + hp 30；P3 Razortine：伤害 30-50→60-80、ease -20%；P3 Steelpillar：力需 165 举不起来 → ease -25%；P3 Venomsward：只有毒抗 → 补 hp 50 + regen 15

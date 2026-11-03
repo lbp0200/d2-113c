@@ -12,9 +12,11 @@
 | Hireling.txt | 6 | 5 | 0 | 0 |
 | MonStats.txt | 0 | 332 | 0 | 0 |
 | Runes.txt | 5 | 5 | 8 | 0 |
+| SetItems.txt | 0 | 0 | 6 | 0 |
 | Skills.txt | 50 | 9 | 10 | 0 |
 | TreasureClassEx.txt | 107 | 0 | 0 | 0 |
-| **合计** | **168** | **351** | **18** | **4** |
+| UniqueItems.txt | 6 | 0 | 20 | 0 |
+| **合计** | **174** | **351** | **44** | **4** |
 
 ## 所有「数值下降」（必须能被解释）
 
@@ -384,6 +386,12 @@
 | Runes.txt | `Runeword154` | T1Param3 | `83` | `` |
 | Runes.txt | `Runeword154` | T1Code4 | `charged` | `pois-len` |
 | Runes.txt | `Runeword154` | T1Param4 | `92` | `` |
+| SetItems.txt | `Magnus' Skin` | prop6 | `` | `balance2` |
+| SetItems.txt | `Magnus' Skin` | min6 | `` | `20` |
+| SetItems.txt | `Magnus' Skin` | max6 | `` | `20` |
+| SetItems.txt | `Magnus' Skin` | prop7 | `` | `hp` |
+| SetItems.txt | `Magnus' Skin` | min7 | `` | `30` |
+| SetItems.txt | `Magnus' Skin` | max7 | `` | `30` |
 | Skills.txt | `Multiple Shot` | LevToHit | `` | `10` |
 | Skills.txt | `Strafe` | LevToHit | `` | `10` |
 | Skills.txt | `Fire Mastery` | passivestat2 | `` | `passive_fire_pierce` |
@@ -394,6 +402,26 @@
 | Skills.txt | `Lightning Mastery` | passivecalc2 | `` | `ln34` |
 | Skills.txt | `Lightning Mastery` | Param3 | `` | `6` |
 | Skills.txt | `Lightning Mastery` | Param4 | `` | `1` |
+| UniqueItems.txt | `Razortine` | prop7 | `` | `ease` |
+| UniqueItems.txt | `Razortine` | min7 | `` | `-20` |
+| UniqueItems.txt | `Razortine` | max7 | `` | `-20` |
+| UniqueItems.txt | `Venomsward` | prop6 | `` | `hp` |
+| UniqueItems.txt | `Venomsward` | min6 | `` | `40` |
+| UniqueItems.txt | `Venomsward` | max6 | `` | `60` |
+| UniqueItems.txt | `Venomsward` | prop7 | `` | `regen` |
+| UniqueItems.txt | `Venomsward` | min7 | `` | `15` |
+| UniqueItems.txt | `Venomsward` | max7 | `` | `15` |
+| UniqueItems.txt | `Heavenly Garb` | prop5 | `dmg-undead` | `dmg-demon` |
+| UniqueItems.txt | `Heavenly Garb` | prop6 | `att-undead` | `att-demon` |
+| UniqueItems.txt | `Heavenly Garb` | prop7 | `` | `hp` |
+| UniqueItems.txt | `Heavenly Garb` | min7 | `` | `30` |
+| UniqueItems.txt | `Heavenly Garb` | max7 | `` | `30` |
+| UniqueItems.txt | `Gravepalm` | prop6 | `` | `crush` |
+| UniqueItems.txt | `Gravepalm` | min6 | `` | `10` |
+| UniqueItems.txt | `Gravepalm` | max6 | `` | `10` |
+| UniqueItems.txt | `Steelpillar` | prop7 | `` | `ease` |
+| UniqueItems.txt | `Steelpillar` | min7 | `` | `-25` |
+| UniqueItems.txt | `Steelpillar` | max7 | `` | `-25` |
 
 新增行：
 - CubeMain.txt：`magic helm + jewel + io + gpr -> fire pierce helm`
