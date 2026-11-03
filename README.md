@@ -8,6 +8,7 @@
 - 路线与决策记录：[PLAN.md](PLAN.md)
 - 游戏到手后的执行顺序：[docs/runbook.md](docs/runbook.md)
 - **进游戏后的验证清单：[docs/verify.md](docs/verify.md)**（每项：验什么 / 怎么验 / 判据 / 不通过改哪里）
+- 部署到 Windows 虚拟机：[deploy/README.md](deploy/README.md)
 - **改了补丁之后**：`python3 -m tools.all --reports` 一条命令重生成 `mod/` 与全部报告
   （顺序有依赖：先 build 再分析；漏跑会被 `tests/test_p2_docs.py` 抓到）
 - 装备层（进行中）：**[docs/p3-items.md](docs/p3-items.md)** —— 380 件暗金的体检表
@@ -103,3 +104,14 @@ Excel 会改引号、改换行、改编码、吞掉空列、把 `-` 转成日期
 - `itemstatcost.txt` 的 `Save Bits` / 已有 stat ID 一律不动（会毁存档）。
 - `-direct -txt` 会在 `data/global/excel/` 里写回 `.bin`；换构建方式时先清 bin。
 - 版本锁死 1.13c（1.14 移除了 `-direct -txt`）。
+
+---
+
+## 数据来源与版权
+
+`vanilla/data/global/excel/` 是《暗黑破坏神 2》1.13c 原版数据表，**版权归暴雪娱乐所有**，
+这里只作为分析基线，方便别人复现结论。仓库里没有任何游戏可执行文件或资源文件；
+自制的代码、脚本、结论文档除引用部分外可随意取用。
+
+部署脚本只输出 7 张表，**故意不含 `CubeMain.txt`**（整合版有 75+ 条自定义合成公式，
+整表覆盖会全部丢失），详见 [deploy/README.md](deploy/README.md)。
