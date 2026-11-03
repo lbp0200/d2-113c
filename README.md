@@ -11,6 +11,7 @@
   （顺序有依赖：先 build 再分析；漏跑会被 `tests/test_p2_docs.py` 抓到）
 - 装备层（进行中）：**[docs/p3-items.md](docs/p3-items.md)** —— 380 件暗金的体检表
   · 套装体检：[docs/p3-sets.md](docs/p3-sets.md) —— 32 套 / 128 件，看"凑到第几件才值得穿"
+  · 跨表对比：[docs/p3-runes.md](docs/p3-runes.md) —— 符文之语 vs 暗金/套装，检验"被替代"假设
 - 职业技能平衡：**[docs/p2-balance-plan.md](docs/p2-balance-plan.md)**
   · 21 系体检表（自动生成）：[docs/p2-trees.md](docs/p2-trees.md)
   · 15 个未改动系的体检结论：[docs/p2-healthy.md](docs/p2-healthy.md)

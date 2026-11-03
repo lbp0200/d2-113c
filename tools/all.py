@@ -30,6 +30,7 @@ STEPS = [
     ("tools.p2_audit", "改动审计（数值下降对账）", False),
     ("tools.p3_items", "装备体检表（暗金）", False),
     ("tools.p3_sets", "套装体检表", False),
+    ("tools.p3_runewords", "符文之语 vs 暗金/套装（跨表）", False),
 ]
 
 
