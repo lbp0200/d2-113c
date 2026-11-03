@@ -11,10 +11,10 @@
 | CubeMain.txt | 0 | 0 | 0 | 4 |
 | Hireling.txt | 6 | 5 | 0 | 0 |
 | MonStats.txt | 0 | 332 | 0 | 0 |
-| Runes.txt | 0 | 2 | 2 | 0 |
+| Runes.txt | 5 | 5 | 8 | 0 |
 | Skills.txt | 50 | 9 | 10 | 0 |
 | TreasureClassEx.txt | 107 | 0 | 0 | 0 |
-| **合计** | **163** | **348** | **12** | **4** |
+| **合计** | **168** | **351** | **18** | **4** |
 
 ## 所有「数值下降」（必须能被解释）
 
@@ -359,6 +359,9 @@
 | MonStats.txt | `willowisp8` | ResPo(H) | 115 | **100** |
 | Runes.txt | `Runeword116` | T1Min1 | 5 | **3** |
 | Runes.txt | `Runeword116` | T1Max1 | 5 | **3** |
+| Runes.txt | `Runeword154` | T1Min3 | 27 | **15** |
+| Runes.txt | `Runeword154` | T1Min4 | 11 | **-50** |
+| Runes.txt | `Runeword154` | T1Max4 | 13 | **-50** |
 | Skills.txt | `Fire Arrow` | mana | 24 | **8** |
 | Skills.txt | `Cold Arrow` | mana | 28 | **12** |
 | Skills.txt | `Fire Mastery` | Param1 | 30 | **24** |
@@ -373,8 +376,14 @@
 
 | 表 | 行 | 列 | 前 | 后 |
 |---|---|---|---|---|
+| Runes.txt | `Runeword88` | T1Code3 | `light` | `mana` |
+| Runes.txt | `Runeword88` | T1Code5 | `gold%` | `regen-mana` |
 | Runes.txt | `Runeword116` | T1Code1 | `light` | `aura` |
 | Runes.txt | `Runeword116` | T1Param1 | `` | `Conviction` |
+| Runes.txt | `Runeword154` | T1Code3 | `charged` | `pierce-pois` |
+| Runes.txt | `Runeword154` | T1Param3 | `83` | `` |
+| Runes.txt | `Runeword154` | T1Code4 | `charged` | `pois-len` |
+| Runes.txt | `Runeword154` | T1Param4 | `92` | `` |
 | Skills.txt | `Multiple Shot` | LevToHit | `` | `10` |
 | Skills.txt | `Strafe` | LevToHit | `` | `10` |
 | Skills.txt | `Fire Mastery` | passivestat2 | `` | `passive_fire_pierce` |

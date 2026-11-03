@@ -150,7 +150,11 @@
       8 件数据支持 Indeed 弱（Steelpillar 力需 165 / Venomsward 只有毒抗 / Heavenly Garb 对不死 …）
       5 件**数据不支持**（Guillaume's Face 35CB+15DS、IK 碎石锤 7 条强属性、Natalya's Shadow 3 孔…）→ 别改
       若干名字在 1.13c 数据里对不上，待确认英文名
-- [ ] **待用户提供：过时符文之语名单**（需附"为什么过时"一句话；我的自动指标已证明不可靠）
+- [x] **重做两个垃圾符文之语**（`patches/p3_runewords.py`）：
+      `Venom` → 毒系武器（`pierce-pois 15~20` + `pois-len -50 帧`，走"DPS"不走"总量"，
+      验收 1.375 < 死亡之网 1.55）；`Nadir` → 去掉两条负面，改回蓝头盔
+      设计见 [p3-runes-plan.md](docs/p3-runes-plan.md) 第二轮
+- [ ] 待验证：`pois-len` 的单位到底是帧还是百分比（原版 `Hellplague` +150 / `Rakescar` +75 推测是帧）
 - [ ] **L2 需要重新定义**：P1 改成"总量上升"后，"稀有度从彩票改里程碑"要重写
       （原计划是提高掉率，现在总量已经翻 2~4 倍，可能不需要）
 - [ ] **L4 废技能**：协同改不了，唯一杠杆是 `uniqueitems` 的 oskill 或 cube 配方（P3 允许）

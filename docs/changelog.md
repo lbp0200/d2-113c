@@ -39,8 +39,19 @@
 | `T1Param1` | 1 | `Runeword116`: (空) → Conviction |
 | `T1Min1` | 1 | `Runeword116`: 5 → 3 |
 | `T1Max1` | 1 | `Runeword116`: 5 → 3 |
+| `T1Code3` | 2 | `Runeword154`: charged → pierce-pois；`Runeword88`: light → mana |
+| `T1Param3` | 1 | `Runeword154`: 83 →  |
+| `T1Min3` | 2 | `Runeword154`: 27 → 15；`Runeword88`: -3 → 20 |
+| `T1Max3` | 2 | `Runeword154`: 15 → 20；`Runeword88`: -3 → 20 |
+| `T1Code4` | 1 | `Runeword154`: charged → pois-len |
+| `T1Param4` | 1 | `Runeword154`: 92 →  |
+| `T1Min4` | 1 | `Runeword154`: 11 → -50 |
+| `T1Max4` | 1 | `Runeword154`: 13 → -50 |
+| `T1Code5` | 1 | `Runeword88`: gold% → regen-mana |
+| `T1Min5` | 1 | `Runeword88`: -33 → 25 |
+| `T1Max5` | 1 | `Runeword88`: -33 → 25 |
 
-理由：P3 中间层降抗：Radiance 的『光环半径 +5』换成『信念 L3（−40%）』（补噩梦→地狱之间的降抗空档，见 docs/p3-runes-plan.md）
+理由：P3 中间层降抗：Radiance 的『光环半径 +5』换成『信念 L3（−40%）』（补噩梦→地狱之间的降抗空档，见 docs/p3-runes-plan.md）；P3 天底重做：去掉两条负面（light -3 / gold -33），换成 +法力 与 回蓝；P3 毒液重做：两个凑数充能 → pierce-pois 15~20 + pois-len -50 帧（毒更快跳完，总量不变；不超死亡之网）
 
 ## Skills.txt
 

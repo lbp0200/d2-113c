@@ -38,6 +38,41 @@ class RadianceConviction(unittest.TestCase):
         codes = [tf.get(self.row, tf.need(f"T1Code{k}")) for k in range(1, 8)]
         self.assertNotIn("light", codes, "光环半径应该已经被换掉了")
 
+    def test_venom_is_poison_weapon(self):
+        tf = self.tf
+        row = next(r for r in tf.rows
+                   if r and tf.get(r, tf.need("Rune Name")) == "Venom")
+        codes = [tf.get(row, tf.need(f"T1Code{k}")) for k in range(1, 8)]
+        self.assertIn("pierce-pois", codes, "毒液应该有毒穿透")
+        self.assertIn("pois-len", codes, "毒液应该有缩短毒持续时间")
+        # 不许有 extra-pois（那会直接超过死亡之网，违反 E2）
+        self.assertNotIn("extra-pois", codes, "毒液不能加毒系技能伤害（会造新 BiS）")
+        # 两个凑数的充能技能应该被换掉
+        self.assertNotIn("charged", codes, "凑数的充能技能应已替换")
+
+    def test_venom_pois_len_is_negative(self):
+        tf = self.tf
+        row = next(r for r in tf.rows
+                   if r and tf.get(r, tf.need("Rune Name")) == "Venom")
+        for k in range(1, 8):
+            if tf.get(row, tf.need(f"T1Code{k}")) == "pois-len":
+                self.assertEqual(float(tf.get(row, tf.need(f"T1Max{k}"))), -50.0,
+                                 "毒持续时间要缩短（负值）")
+                return
+        self.fail("找不到 pois-len")
+
+    def test_nadir_has_no_negatives(self):
+        tf = self.tf
+        row = next(r for r in tf.rows
+                   if r and tf.get(r, tf.need("Rune Name")) == "Nadir")
+        for k in range(1, 8):
+            code = tf.get(row, tf.need(f"T1Code{k}"))
+            if not code:
+                continue
+            self.assertNotIn(code, ("light", "gold%"), f"天底不该再有负面属性 {code}")
+            v = float(tf.get(row, tf.need(f"T1Max{k}")) or 0)
+            self.assertGreaterEqual(v, 0, f"天底的 {code} 不该是负数")
+
     def test_other_properties_untouched(self):
         # 只换第一条，其余 5 条保持原样（等价交换）
         tf = self.tf
