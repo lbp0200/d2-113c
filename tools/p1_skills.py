@@ -162,6 +162,10 @@ def _eval_calc(calc: str, p: list[str], maxlvl: int) -> tuple[float, float] | No
             return -num(1), -(num(1) + num(2) * (maxlvl - 1))
         if calc == "dm12":
             return num(1), num(2)
+        if calc == "dm34":
+            return num(3), num(4)
+        if calc == "dm56":
+            return num(5), num(6)
         if calc == "-par5":
             return -num(5), -num(5)
     except (ValueError, IndexError):
@@ -208,6 +212,8 @@ def support_values(ctx: Ctx) -> list[str]:
     L = ["## 被动 / 光环技能的关键数值（用于复核非伤害类声明）", ""]
     L += ["这些数字不在伤害列里（伤害表查不到），但很多结论要靠它们 —— ",
           "比如「Fade +75% 全抗」「Battle Orders +92% 生命」「灰熊 +215% 伤害」。", ""]
+    L += ["> 表里是 `skills.txt` 的**原始数值**：抗性类光环会在游戏里被抗性上限截断，",
+          "> 不要当「实际能到多少抗」读。", ""]
     L += ["| 技能 | 职业 | 需等级 | stat | 公式 | L1 | L20 |", "|---|---|---:|---|---|---:|---:|"]
     for skill, cls, req, stat, calc, l1, l20 in rows:
         L.append(f"| {skill} | {CLASSES[cls]} | {req} | `{stat}` | `{calc}` | "
