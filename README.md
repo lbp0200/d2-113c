@@ -7,6 +7,8 @@
 - **待办与阻塞项：[TODO.md](TODO.md)**
 - 路线与决策记录：[PLAN.md](PLAN.md)
 - 游戏到手后的执行顺序：[docs/runbook.md](docs/runbook.md)
+- **改了补丁之后**：`python3 -m tools.all --reports` 一条命令重生成 `mod/` 与全部报告
+  （顺序有依赖：先 build 再分析；漏跑会被 `tests/test_p2_docs.py` 抓到）
 - 职业技能平衡（主线工作）：**[docs/p2-balance-plan.md](docs/p2-balance-plan.md)**
   · 21 系体检表（自动生成）：[docs/p2-trees.md](docs/p2-trees.md)
   · 13 个未改动系的体检结论：[docs/p2-healthy.md](docs/p2-healthy.md)

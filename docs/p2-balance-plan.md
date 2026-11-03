@@ -197,7 +197,8 @@
 1. **诊断**：从 `p1-skills.md` 拿该系的伤害曲线 + 掌握/降抗结构
 2. **预演**：手算各抗性段倍率（0/50/75/90/99%），和"标杆系"对比
 3. **落补丁**：`patches/p2_skills.py` 里加一段，**一次只动一个系**
-4. **验收**：`python3 -m tools.build` + `tools.p1_skills.py --overlay mod --stdout` 复核公式
+4. **验收**：`python3 -m tools.all --reports`（按依赖顺序重生成 mod 与全部报告，
+   顺序漏了会被 `tests/test_p2_docs.py` 的 mtime 检查抓到）
 5. **记账**：更新本文件的进度表 + `TODO.md`
 
 ---
