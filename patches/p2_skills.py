@@ -65,3 +65,32 @@ _fm.set("*Param1 Description", "Damage bonus")
 _fm.set("*Param2 Description", "Damage bonus per level")
 _fm.set("*Param3 Description", "Enemy fire resist reduction")
 _fm.set("*Param4 Description", "Enemy fire resist reduction per level")
+
+
+# --------------------------------------------------------------- 德鲁伊火系
+# 诊断：火系不是"伤害低"，是**贵**。
+#   Armageddon  L20 834-963 / 35 法力 = 25.7 伤害/法力
+#   Volcano     L20 236-240 / 25 法力 =  9.5
+#   Tornado(风) L20 425-451 / 10 法力 = 43.8   ← 对照组
+# 单发伤害反而是 Armageddon 高（2 倍于 Tornado），但它烧不动：一发 35 点法力。
+#
+# 所以这里动的是"可持续性"而不是纯粹加伤害：
+#   Armageddon：法力 35→25，伤害 ×1.25 → 约 44.8 伤害/法力（追平 Tornado）
+#   Volcano   ：法力 25→16，伤害 ×1.30 → 约 20.0
+#
+# 为什么不去改 Armageddon 的"陨石乱落"：那是弹道/硬编码，txt 碰不到。
+# 火德能拿到手的独有胜场因此定为 **M2 密集清场（边走边烧）**，而不是和风德拼单体。
+_DRU_FIRE = [
+    ("Armageddon", 25, 1.25, "法力 35→25、伤害 ×1.25"),
+    ("Volcano", 16, 1.30, "法力 25→16、伤害 ×1.30"),
+]
+
+for _name, _mana, _factor, _why in _DRU_FIRE:
+    _p = patch("skills.txt", why=f"P2-德鲁伊火系：{_name} {_why}").where(
+        "skill", matches(rf"^{_name}$")
+    )
+    _p.set("mana", _mana)
+    for _col in ["EMin", "EMax"] + [
+        f"{pre}Lev{i}" for pre in ("EMin", "EMax") for i in range(1, 6)
+    ]:
+        _p.mul(_col, _factor, ndigits=0)

@@ -77,8 +77,9 @@
 - [x] **元素穿透 craft 已完成**：`patches/p2_items.py` 新增 4 个配方
       （魔法头盔 + 珠宝 + 埃欧 r16 + 完美宝石 → craft 头盔，`pierce-X 10~20` /
       `extra-X 10~15%` / `res-X 20~30`）。选 craft 是因为**不需要改 Big5 字符串表**
-- [ ] **德鲁伊 · 火系**（最大空洞）：他没火掌握，装备层已给穿透，
-      **还差技能层的本体伤害**（Armageddon 25.7 vs Tornado 43.8）
+- [x] **德鲁伊 · 火系已完成**：法力 Armageddon 35→25 / Volcano 25→16，
+      伤害 ×1.25 / ×1.30 → 伤害/法力 25.7→43.2、9.5→17.5（风德 Tornado 43.8）
+      **误判更正**：火德不缺伤害（单发是 Tornado 的 2 倍），缺的是可持续性
 - [ ] **死灵 · 毒系**：`passive_pois_mastery`/`_pierce` 无人发放，可挂到 Poison Dagger
 - [ ] **刺客 · 火陷阱 / 亚马逊 · 元素弓**：和德鲁伊共用一件穿透装备即可
 - [ ] **法师 · 电系**：要不要给 `passive_ltng_pierce`（伤害已最高，给多少要小心）
@@ -114,6 +115,7 @@
 
 当前补丁规模：**453 处改动 / 4 张表**
 （`MonStats.txt` 332 + `TreasureClassEx.txt` 107 + `Skills.txt` 10 + `CubeMain.txt` 4）。
+> 待重新生成：`python3 -m tools.build` 的统计口径包含新增行。
 
 ---
 
