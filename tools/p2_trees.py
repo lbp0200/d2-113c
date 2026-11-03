@@ -79,8 +79,10 @@ TREES: list[dict] = [
          skills=["Charged Bolt", "Static Field", "Telekinesis", "Nova",
                  "Lightning", "Chain Lightning", "Teleport", "Thunder Storm",
                  "Energy Shield", "Lightning Mastery"],
-         wins=["M2", "M6"], status=TODO,
-         note="原始伤害全法师最高（掌握 +278%），但 M4 完全没有 → 见 TODO #sor-lightning"),
+         wins=["M2", "M6", "M4"], status=DONE,
+         note="已修：电掌握 +278%→+200%，并发放 −25% 电穿透（等价交换）。"
+              "区域平均系数 2.31→2.43 几乎不变，但「完全打不动的区域」 6→0。"
+              "赢 M2/M6/M4 = 3 个场景，正好卡在 T2 边界内"),
     dict(cls="sor", tree="冰", dmg="冰",
          skills=["Ice Bolt", "Frozen Armor", "Frost Nova", "Ice Blast",
                  "Shiver Armor", "Glacial Spike", "Blizzard", "Chilling Armor",

@@ -6,3 +6,5 @@
 {"type":"task_complete","goalId":"mw05wo5q-b5rmpb","taskId":"nec-poison","evidence":"Poison Nova 法力 20→16、速率×1.25：总量 625-666 → 797-847，总量/法力 32.3 → 51.4（已 build 验证）；p1-skills 新增毒系速率×帧自动表并说明语义；毒系定位 M2（全屏、放完就走）对骨系 M3；p2-trees 显示 ✅已改；59 项单测全绿","at":"2026-11-03T04:10:29.101Z"}
 {"type":"task_started","goalId":"mw05wo5q-b5rmpb","taskId":"ass-traps-fire","at":"2026-11-03T04:10:37.109Z"}
 {"type":"task_complete","goalId":"mw05wo5q-b5rmpb","taskId":"ass-traps-fire","evidence":"Inferno Sentry 伤害×3.2 已验证：L20 44-50→139-160，平均/法力 2.3→7.5；同档同类对比（req24/20法力：雷光守卫250 vs 喷火哨卫47）写入 p2-balance-plan §6；胜场修正为 M1 开荒（req1 Fire Trauma 143、req12 Wake of Fire 103>68）；未动 missiles.txt；59 项单测全绿","at":"2026-11-03T04:12:17.455Z"}
+{"type":"task_complete","goalId":"mw05wo5q-b5rmpb","taskId":"ama-elemental","evidence":"Fire Arrow 法力 24→8（伤害/法力 4.3→12.8）、Cold Arrow 28→12（3.2→7.4），build 已验证；误判更正：元素箭 SrcDam=128 同时吃武器+元素；取舍对照表写入 p2-balance-plan §6；弓与弩树判为 ✅已改（M1/M2/M6）；59 项单测全绿","at":"2026-11-03T04:13:33.139Z"}
+{"type":"task_started","goalId":"mw05wo5q-b5rmpb","taskId":"sor-lightning","at":"2026-11-03T04:13:52.484Z"}

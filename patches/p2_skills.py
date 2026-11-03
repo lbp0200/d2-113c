@@ -170,3 +170,34 @@ for _name, _mana in (("Fire Arrow", 8), ("Cold Arrow", 12)):
         "skills.txt",
         why=f"P2-亚马逊元素弓：{_name} 法力 → {_mana}（原法力曲线倒挂：低阶比高阶贵一倍多）",
     ).where("skill", matches(rf"^{_name}$")).set("mana", _mana)
+
+
+# --------------------------------------------------------------- 法师电系
+# 诊断：电系**已经是区域平均最强的元素**（126 个区域的平均伤害系数 2.31，冰 1.38 / 火 1.92），
+# 但它有 6 个区域**完全是 0**（进去就是打不动），冰只有 2 个、火只有 1 个。
+#
+# 所以电系的问题不是"总强度不够"，是**分布太极端**：低抗怪身上过杀，高抗怪身上归零。
+#
+# 三个方案（区域平均系数 / 完全打不动的区域）：
+#   现状 +278%、无穿透      2.31 / 6 个
+#   直接加 -22% 穿透        2.95 / 0 个   ← 总强度再涨 28%，会造出新最优
+#   伤害换穿透(+200%/-25%)  2.41 / 0 个   ← 总强度几乎不变，只把"过杀"换成"能打"
+#
+# 取第三种：这是 **等价交换**（T3）。0% 抗性处 3.75 vs 现状 3.78 —— 几乎没变；
+# 90% 抗性处 1.05 vs 现状 0.38 —— 从"打不动"变成"能打"。
+#
+# T2：改动后电系赢 M2/M6/M4 = 3 个场景，正好在"没有全能系"（≥4 才算违规）的边界内。
+_lm = patch(
+    "skills.txt",
+    why="P2-法师电系：电掌握 +278%→+200%，并发放 -25% 电穿透（等价交换，消除 6 个归零区域）",
+).where("skill", matches(r"^Lightning Mastery$"))
+_lm.set("Param1", 29)     # ln12：L1 = +29%
+_lm.set("Param2", 9)      # ln12：每级 +9% → L20 = 29 + 171 = 200%
+_lm.set("Param3", 6)      # ln34：L1 = -6%
+_lm.set("Param4", 1)      # ln34：每级 +1% → L20 = 6 + 19 = 25%
+_lm.set("passivestat2", "passive_ltng_pierce")
+_lm.set("passivecalc2", "ln34")
+_lm.set("*Param1 Description", "Damage bonus")
+_lm.set("*Param2 Description", "Damage bonus per level")
+_lm.set("*Param3 Description", "Enemy lightning resist reduction")
+_lm.set("*Param4 Description", "Enemy lightning resist reduction per level")
