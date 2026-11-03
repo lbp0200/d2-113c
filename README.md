@@ -4,7 +4,9 @@
 让玩家的选择、技巧、构筑决定结果，而不是让"点箱子的次数"和随机数决定结果。
 
 - 目标与验收标准：**[docs/design-goal.md](docs/design-goal.md)**（先看这个）
+- **待办与阻塞项：[TODO.md](TODO.md)**
 - 路线与决策记录：[PLAN.md](PLAN.md)
+- 游戏到手后的执行顺序：[docs/runbook.md](docs/runbook.md)
 - 数据报告：`docs/p1-*.md`
 
 ## 工作流
