@@ -20,7 +20,7 @@
 
 | 职业 | 系 | 伤害类型 | 技能数（伤害/武器/全部） | 胜场 | 自降抗 | 主输出（伤害/法力@20） | 本轮改动 | 状态 |
 |---|---|---|---:|---|---|---|---|---|
-| 亚马逊 | 弓与弩 | 物理 + 火/冰 | 7/3/10 | M1 M2 M6 | — | Immolation Arrow 54.8 | `Fire Arrow`（mana）<br>`Cold Arrow`（mana） | ✅已改 |
+| 亚马逊 | 弓与弩 | 物理 + 火/冰 | 7/3/10 | M1 M2 M6 | — | Immolation Arrow 54.8 | `Fire Arrow`（mana）<br>`Cold Arrow`（mana）<br>`Multiple Shot`（LevToHit、SrcDam）<br>`Strafe`（LevToHit、SrcDam） | ✅已改 |
 | 亚马逊 | 被动与魔法 | — | 0/0/10 | M5 | — | — | — | ⚪体检通过 |
 | 亚马逊 | 标枪与长矛 | 电 + 毒 | 7/3/10 | M2 M3 | — | Power Strike 62.9 | — | ⚪体检通过 |
 | 法师 | 火 | 火 | 8/0/10 | M3 M4 | Fire Mastery −45%(火) | Meteor 39.6 | `Fire Mastery`（passivestat2、passivecalc2、Param1、Param2…） | ✅已改 |
@@ -51,7 +51,7 @@
 - 自降抗：—
 - 主输出：`Immolation Arrow` — L20 652-663，法力 12，54.8 伤害/法力
 - 其中 3 个是武器百分比技能（`SrcDam`，伤害取决于武器）
-- 判定：**✅已改** — 已修：元素箭的法力曲线倒挂（Fire Arrow 24→8、Cold Arrow 28→12）。元素箭同时吃武器伤害(SrcDam 128)和元素伤害，成长性不比物理弓差；卡它们的是火免 + 无降抗，降抗由穿透 craft 补
+- 判定：**✅已改** — 已修两轮：①元素箭法力倒挂（Fire Arrow 24→8、Cold Arrow 28→12）；②物理弓的 SrcDam 96→128 + 补 LevToHit 10（对所有近战技能是 128，只有这两个弓群攻是 96）。**第一次判定是错的**：当时只用「物理免疫只 3%」论证健康，但免疫覆盖只决定能不能打，手感由基础伤害/命中决定 —— 而弓的基础伤害只有同档双手近战的 56~67%。
 
 ### 亚马逊 · 被动与魔法
 

@@ -54,9 +54,11 @@ TREES: list[dict] = [
                  "Exploding Arrow", "Ice Arrow", "Guided Arrow", "Strafe",
                  "Immolation Arrow", "Freezing Arrow"],
          wins=["M1", "M2", "M6"], status=DONE,
-         note="已修：元素箭的法力曲线倒挂（Fire Arrow 24→8、Cold Arrow 28→12）。"
-              "元素箭同时吃武器伤害(SrcDam 128)和元素伤害，成长性不比物理弓差；"
-              "卡它们的是火免 + 无降抗，降抗由穿透 craft 补"),
+         note="已修两轮：①元素箭法力倒挂（Fire Arrow 24→8、Cold Arrow 28→12）；"
+              "②物理弓的 SrcDam 96→128 + 补 LevToHit 10（对所有近战技能是 128，只有这两个弓群攻是 96）"
+              "。**第一次判定是错的**：当时只用「物理免疫只 3%」论证健康，"
+              "但免疫覆盖只决定能不能打，手感由基础伤害/命中决定 —— 而弓的基础伤害只有"
+              "同档双手近战的 56~67%。"),
     dict(cls="ama", tree="被动与魔法", dmg="—",
          skills=["Inner Sight", "Critical Strike", "Dodge", "Slow Missiles",
                  "Avoid", "Penetrate", "Dopplezon", "Evade", "Valkyrie", "Pierce"],

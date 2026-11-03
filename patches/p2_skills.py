@@ -205,3 +205,38 @@ _lm.set("*Param1 Description", "Damage bonus")
 _lm.set("*Param2 Description", "Damage bonus per level")
 _lm.set("*Param3 Description", "Enemy lightning resist reduction")
 _lm.set("*Param4 Description", "Enemy lightning resist reduction per level")
+
+
+# --------------------------------------------------------------- 亚马逊物理弓
+# 实测反馈（用户进游戏玩出来的）：物理弓「A1 小怪都得打半天」。数据完全支持这个手感，
+# 而且原因是**三项叠加**，不是单一数值：
+#
+#   ① 弓的基础伤害只有同档双手近战的 56~67%
+#      （req 0：Great Maul 38-58 / Giant Axe 22-45，而 Short Bow 1-4、Hunter's Bow 2-6
+#        —— 弓是双手武器，伤害却低于单手的 Hand Axe 3-6）
+#   ② 群攻技能还要再乘 96%，而**全职业所有近战攻击技能都是 128**
+#      （Zeal / Sacrifice / Concentrate / Whirlwind / Frenzy / Bash / Vengeance /
+#        Jab / Fend / Power Strike / Maul / Fury 一一核对过）
+#   ③ Multiple Shot / Strafe 的 `LevToHit` 是空的，而近战技能都有 5~10
+#      → 不仅打得少，还更容易打空
+#
+# 相乘 ≈ 0.60 × 0.75 ≈ 45% 的等效输出，还要消耗箭矢。
+#
+# 这里的改动只修 **② 和 ③**（"和别的职业技能不一致"，属于修 bug 而不是加强）：
+#   `SrcDam` 96 → 128（+33%），`LevToHit` 空 → 10（和 Zeal 同级）
+#
+# 故意**不动**弓的基础伤害（`Weapons.txt`）：那会连带影响罗格佣兵、所有弓类底材
+# 和暗金/套装弓，影响面大得多。先看 A+B 够不够。
+#
+# ⚠️ 风险：如果游戏里发现齐射过强（一屏秒），唯一旋钮是把 `SrcDam` 降到 112。
+_BOW_SRC = 128
+_BOW_TOHIT = 10
+
+for _name in ("Multiple Shot", "Strafe"):
+    _b = patch(
+        "skills.txt",
+        why=f"P2-亚马逊物理弓：{_name} SrcDam 96→{_BOW_SRC}、补 LevToHit {_BOW_TOHIT}"
+            "（与近战技能一致；实测物理弓伤害过低）",
+    ).where("skill", matches(rf"^{_name}$"))
+    _b.set("SrcDam", _BOW_SRC)
+    _b.set("LevToHit", _BOW_TOHIT)

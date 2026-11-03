@@ -48,8 +48,10 @@
 | `EMaxLev3` | 4 | `Armageddon`: 27 → 34；`Volcano`: 6 → 8；`Poison Nova`: 9 → 11；…另 1 行 |
 | `EMaxLev4` | 4 | `Armageddon`: 34 → 42；`Volcano`: 8 → 10；`Poison Nova`: 14 → 18；…另 1 行 |
 | `EMaxLev5` | 4 | `Armageddon`: 40 → 50；`Volcano`: 13 → 17；`Poison Nova`: 16 → 20；…另 1 行 |
+| `SrcDam` | 2 | `Multiple Shot`: 96 → 128；`Strafe`: 96 → 128 |
+| `LevToHit` | 2 | `Multiple Shot`: (空) → 10；`Strafe`: (空) → 10 |
 
-理由：P2-亚马逊元素弓：Cold Arrow 法力 → 12（原法力曲线倒挂：低阶比高阶贵一倍多）；P2-亚马逊元素弓：Fire Arrow 法力 → 8（原法力曲线倒挂：低阶比高阶贵一倍多）；P2-刺客火陷阱：Inferno Sentry 伤害 ×3.2（同档同类陷阱里只有雷光守卫的 1/5）；P2-德鲁伊火系：Armageddon 法力 35→25、伤害 ×1.25；P2-德鲁伊火系：Volcano 法力 25→16、伤害 ×1.30；P2-死灵毒系：Poison Nova 法力 20→16、毒速率 ×1.25（定位 M2 全屏清场）；P2-法师火系：火掌握 伤害163%→100%，并发放 -45% 火穿透（填 passive_fire_pierce 的空口）；P2-法师电系：电掌握 +278%→+200%，并发放 -25% 电穿透（等价交换；高抗段 0.94/0.38→1.50/1.05，免疫墙不变）
+理由：P2-亚马逊元素弓：Cold Arrow 法力 → 12（原法力曲线倒挂：低阶比高阶贵一倍多）；P2-亚马逊元素弓：Fire Arrow 法力 → 8（原法力曲线倒挂：低阶比高阶贵一倍多）；P2-亚马逊物理弓：Multiple Shot SrcDam 96→128、补 LevToHit 10（与近战技能一致；实测物理弓伤害过低）；P2-亚马逊物理弓：Strafe SrcDam 96→128、补 LevToHit 10（与近战技能一致；实测物理弓伤害过低）；P2-刺客火陷阱：Inferno Sentry 伤害 ×3.2（同档同类陷阱里只有雷光守卫的 1/5）；P2-德鲁伊火系：Armageddon 法力 35→25、伤害 ×1.25；P2-德鲁伊火系：Volcano 法力 25→16、伤害 ×1.30；P2-死灵毒系：Poison Nova 法力 20→16、毒速率 ×1.25（定位 M2 全屏清场）；P2-法师火系：火掌握 伤害163%→100%，并发放 -45% 火穿透（填 passive_fire_pierce 的空口）；P2-法师电系：电掌握 +278%→+200%，并发放 -25% 电穿透（等价交换；高抗段 0.94/0.38→1.50/1.05，免疫墙不变）
 
 ## TreasureClassEx.txt
 

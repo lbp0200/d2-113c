@@ -10,9 +10,9 @@
 |---|---:|---:|---:|---:|
 | CubeMain.txt | 0 | 0 | 0 | 4 |
 | MonStats.txt | 0 | 332 | 0 | 0 |
-| Skills.txt | 48 | 9 | 8 | 0 |
+| Skills.txt | 50 | 9 | 10 | 0 |
 | TreasureClassEx.txt | 107 | 0 | 0 | 0 |
-| **合计** | **155** | **341** | **8** | **4** |
+| **合计** | **157** | **341** | **10** | **4** |
 
 ## 所有「数值下降」（必须能被解释）
 
@@ -364,6 +364,8 @@
 
 | 表 | 行 | 列 | 前 | 后 |
 |---|---|---|---|---|
+| Skills.txt | `Multiple Shot` | LevToHit | `` | `10` |
+| Skills.txt | `Strafe` | LevToHit | `` | `10` |
 | Skills.txt | `Fire Mastery` | passivestat2 | `` | `passive_fire_pierce` |
 | Skills.txt | `Fire Mastery` | passivecalc2 | `` | `ln34` |
 | Skills.txt | `Fire Mastery` | Param3 | `` | `7` |
