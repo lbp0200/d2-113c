@@ -46,7 +46,7 @@
 >
 > 当前统计：✅已改 6 / ⚪体检通过 12 / ⚠️T2过强 2 / ⬜待修 0 / ❌修不了 1 = 21
 >
-> **14 个没动数据的系的书面结论：[`p2-healthy.md`](p2-healthy.md)**
+> **15 个没动数据的系的书面结论：[`p2-healthy.md`](p2-healthy.md)**
 > （12 个"体检通过"逐条写明"赢哪个场景、凭什么、为何不动"；2 个 T2 过强的见 §7）
 
 `降抗` 一列只看**该系自己能不能降自己元素的抗性**。
@@ -56,7 +56,7 @@
 
 | 系 | 主输出（伤害/法力 @L20） | 伤害类型 | 自降抗 | 现在赢在 | 缺什么 |
 |---|---|---|---:|---|---|
-| 弓与弩 | Multiple Shot / Strafe（`SrcDam` 武器系）、Immolation Arrow 54.8 | 物理 + 火 | ❌ | M2 M6 | 元素箭无降抗 |
+| 弓与弩 | Multiple Shot / Strafe（`SrcDam` 武器系）、Immolation Arrow 54.8 | 物理 + 火 | ❌ | M1 M2 M6 | 元素箭法力倒挂已修；仍无降抗（穿透 craft 补） |
 | 被动与魔法 | 女武神 / 闪避三连 / Pierce（穿刺 100%） | — | ⚪ | M5 | — |
 | 标枪与长矛 | Lightning Fury 23.5、Charged Strike 16.6 | 电 + 毒 | ❌ | M2 M3 | 电系无降抗 |
 
@@ -66,8 +66,8 @@
 
 | 系 | 主输出 | 伤害类型 | 自降抗 | 现在赢在 | 缺什么 |
 |---|---|---|---:|---|---|
-| 火 | Meteor 39.6 / Fire Ball 34.5 | 火 | ❌→**−45%** | M3（修后 +M4） | **本次已修** |
-| 电 | Chain Lightning 25.9 / Nova 18.4 | 电 | ❌ | M2 M6 | M4 完全没有 |
+| 火 | Meteor 39.6 / Fire Ball 34.5 | 火 | ❌→**−45%** | M3 M4 | 已修（伤害换穿透） |
+| 电 | Chain Lightning 25.9 / Nova 18.4 | 电 | ❌→**−25%** | M2 M6 M4 | 已修；但归零区域仍在（穿透破不了免疫） |
 | 冰 | Blizzard 39.2 / Ice Blast 33.6 / Frozen Orb 8.8 | 冰 | **−115%** | M1 M2 M3 M4 | **赢太多 → 违反 T2** |
 
 → 火系已修。**冰系是全游戏唯一同时满足 M1+M2+M3+M4 的系**，这是 T2 违规，
@@ -78,7 +78,7 @@
 | 系 | 主输出 | 伤害类型 | 自降抗 | 现在赢在 | 缺什么 |
 |---|---|---|---:|---|---|
 | 召唤 | 骷髅 / 石魔 / 复活（伤害不在 skills.txt） | 物理 | ⚪ | M1 M5 | 上限靠装备与技能等级 |
-| 毒与骨 | Bone Spirit 25.9、Bone Spear 11.8 / Poison Nova 0.6（速率） | **魔法** + 毒 | 骨 ⚪ / 毒 **−70%** | M3（骨） | **毒系无任何掌握** |
+| 毒与骨 | Bone Spirit 25.9、Bone Spear 11.8 / Poison Nova 0.6（速率，总量 797） | **魔法** + 毒 | 骨 ⚪ / 毒 **−70%**（在诅咒系） | M2 M3 | 毒系无掌握 stat（靠 craft 的 extra-pois）；降抗跨系 |
 | 诅咒 | Amplify Damage / Decrepify / Lower Resist −70% | — | **−70%** | M5 | — |
 
 → 骨系是魔法伤害（1% 免疫）+ 自带降抗的辅助 → 结构最完整。
@@ -100,7 +100,7 @@
 | 系 | 主输出 | 伤害类型 | 自降抗 | 现在赢在 | 缺什么 |
 |---|---|---|---:|---|---|
 | 战斗 | Whirlwind / Berserk / Frenzy（`SrcDam`） | 物理 | ⚪ | M3 M6 | **无 AoE 技能**（靠装备） |
-| 战斗精通 | 武器掌握 / Iron Skin / Natural Resistance +80% | — | ⚪ | — | 纯被动，本身不构成"系" |
+| 战斗精通 | 武器掌握 / Iron Skin / Natural Resistance **+80% 全抗** | — | ⚪ | M5 | 纯被动，不产伤害，但把抗性/防御的安全线拉满 |
 | 战吼 | Battle Orders / War Cry 25.5 | 物理 | ⚪ | M5 | War Cry 伤害不足以清场 |
 
 → 免疫压力最小（物理免疫 3%），缺的是范围。**txt 修不了**（AoE 靠武器/硬编码），
@@ -110,7 +110,7 @@
 
 | 系 | 主输出 | 伤害类型 | 自降抗 | 现在赢在 | 缺什么 |
 |---|---|---|---:|---|---|
-| 元素 | Tornado 43.8 / Hurricane 11.3（**物理**）/ Armageddon 25.7 | 风=物理 / 火 | ❌ | M2 M3（风） | **火半系完全没有出路** |
+| 元素 | Tornado 43.8 / Hurricane 11.3（**物理**）/ Armageddon 43.2（修后） | 风=物理 / 火 | ❌ | M2 M3 | 火半系已修（法力/伤害）；穿透靠 craft |
 | 变形 | Fire Claws 99.4（武器系）/ Rabies | 物理 + 火 + 毒 | ❌ | M3 | 靠武器 |
 | 召唤 | Grizzly 12.4 / 灵 | 物理 | ⚪ | M5 | — |
 
@@ -121,7 +121,7 @@
 
 | 系 | 主输出 | 伤害类型 | 自降抗 | 现在赢在 | 缺什么 |
 |---|---|---|---:|---|---|
-| 陷阱 | Lightning Sentry（电）/ Death Sentry（尸爆） | 电 + 火 | ❌ | M2（电 + 尸爆） | **火陷阱无降抗** |
+| 陷阱 | Lightning Sentry（电）/ Death Sentry（尸爆）/ Inferno Sentry（火，修后 150） | 电 + 火 | ❌ | M1 M2 | 火陷阱已修；仍无降抗 |
 | 暗影 | Fade +75% 全抗 / Cloak of Shadows / Mind Blast | — | ⚪ | M5 | — |
 | 武学 | Dragon Talon / Tiger Strike / Phoenix Strike | 物理 + 元素 | ❌ | M3 | 靠武器 |
 
@@ -189,7 +189,7 @@
 | 13 | 圣骑士 · 进攻光环 | ⚪ 体检通过 | `Conviction` −125%（全游戏最强）+ `Fanaticism` | [p2-healthy](p2-healthy.md) |
 | 14 | 圣骑士 · 防御光环 | ⚪ 体检通过 | 抗性光环 / 冥思回蓝 / 救赎，纯支援 | [p2-healthy](p2-healthy.md) |
 | 15 | 野蛮人 · 战斗 | ❌ 修不了 | 缺 AoE，而范围是硬编码 —— 短板不在 txt 的杠杆范围里 | [p2-healthy](p2-healthy.md) |
-| 16 | 野蛮人 · 战斗精通 | ⚪ 体检通过 | 纯被动（`Natural Resistance` L20 +80% 全抗），不参与死内容判定 | [p2-healthy](p2-healthy.md) |
+| 16 | 野蛮人 · 战斗精通 | ⚪ 体检通过 | 赢 **M5**：`Natural Resistance` L20 **+80% 全抗**、`Iron Skin`、武器掌握（差一样是它不产伤害，但安全线拉满） | [p2-healthy](p2-healthy.md) |
 | 17 | 野蛮人 · 战吼 | ⚪ 体检通过 | `Battle Orders` L20 +92% 生命/法力 | [p2-healthy](p2-healthy.md) |
 | 18 | 德鲁伊 · 变形 | ⚪ 体检通过 | `Fire Claws` 99.4 伤害/法力（全德鲁伊最高） | [p2-healthy](p2-healthy.md) |
 | 19 | 德鲁伊 · 召唤 | ⚪ 体检通过 | `Summon Grizzly` L20 +215% 伤害光环 + 橡木贤者 | [p2-healthy](p2-healthy.md) |

@@ -260,6 +260,88 @@
 > `Poison Nova` 的总量和它同档，但**摊在 2 秒里、而且是全屏**。
 > 所以毒的定位不是「打得快」，是「放一次走人」。
 
+## 被动 / 光环技能的关键数值（用于复核非伤害类声明）
+
+这些数字不在伤害列里（伤害表查不到），但很多结论要靠它们 —— 
+比如「Fade +75% 全抗」「Battle Orders +92% 生命」「灰熊 +215% 伤害」。
+
+| 技能 | 职业 | 需等级 | stat | 公式 | L1 | L20 |
+|---|---|---:|---|---|---:|---:|
+| Critical Strike | 亚马逊 | 1 | `passive_critical_strike` | `dm12` | +5 | **+80** |
+| Dodge | 亚马逊 | 6 | `passive_dodge` | `dm12` | +10 | **+65** |
+| Slow Missiles | 亚马逊 | 12 | `skill_handofathena` | `ln12` | +33 | **+33** |
+| Avoid | 亚马逊 | 12 | `passive_avoid` | `dm12` | +15 | **+75** |
+| Penetrate | 亚马逊 | 18 | `item_tohit_percent` | `ln12` | +35 | **+225** |
+| Evade | 亚马逊 | 24 | `passive_evade` | `dm12` | +10 | **+65** |
+| Pierce | 亚马逊 | 30 | `skill_pierce` | `dm12` | +10 | **+100** |
+| Warmth | 法师 | 1 | `manarecoverybonus` | `ln12` | +30 | **+258** |
+| Frozen Armor | 法师 | 1 | `skill_armor_percent` | `ln12` | +30 | **+125** |
+| Shiver Armor | 法师 | 12 | `skill_armor_percent` | `ln12` | +45 | **+159** |
+| Chilling Armor | 法师 | 24 | `skill_armor_percent` | `ln12` | +45 | **+140** |
+| Fire Mastery | 法师 | 30 | `passive_fire_mastery` | `ln12` | +30 | **+163** |
+| Lightning Mastery | 法师 | 30 | `passive_ltng_mastery` | `ln12` | +50 | **+278** |
+| Cold Mastery | 法师 | 30 | `passive_cold_pierce` | `ln12` | +20 | **+115** |
+| Amplify Damage | 死灵法师 | 1 | `damageresist` | `-par5` | -100 | **-100** |
+| Weaken | 死灵法师 | 6 | `damagepercent` | `-par5` | -33 | **-33** |
+| Summon Resist | 死灵法师 | 24 | `passive_summon_resist` | `dm12` | +20 | **+75** |
+| IronGolem | 死灵法师 | 24 | `thorns_percent` | `ln12` | +150 | **+435** |
+| Lower Resist | 死灵法师 | 30 | `fireresist` | `-dm56` | -25 | **-70** |
+| Lower Resist | 死灵法师 | 30 | `lightresist` | `-dm56` | -25 | **-70** |
+| Lower Resist | 死灵法师 | 30 | `coldresist` | `-dm56` | -25 | **-70** |
+| Lower Resist | 死灵法师 | 30 | `poisonresist` | `-dm56` | -25 | **-70** |
+| FireGolem | 死灵法师 | 30 | `item_absorbfire_percent` | `dm12` | +25 | **+100** |
+| Might | 圣骑士 | 1 | `damagepercent` | `ln34` | +40 | **+230** |
+| Thorns | 圣骑士 | 6 | `thorns_percent` | `ln34` | +250 | **+1010** |
+| Defiance | 圣骑士 | 6 | `skill_armor_percent` | `ln34` | +70 | **+260** |
+| Blessed Aim | 圣骑士 | 12 | `item_tohit_percent` | `ln34` | +75 | **+360** |
+| Concentration | 圣骑士 | 18 | `damagepercent` | `ln34` | +60 | **+345** |
+| Vigor | 圣骑士 | 18 | `staminarecoverybonus` | `ln34` | +50 | **+525** |
+| Vigor | 圣骑士 | 18 | `skill_staminapercent` | `ln34` | +50 | **+525** |
+| Sanctuary | 圣骑士 | 24 | `item_undeaddamage_percent` | `ln34` | +150 | **+720** |
+| Meditation | 圣骑士 | 24 | `manarecoverybonus` | `ln34` | +300 | **+775** |
+| Conviction | 圣骑士 | 30 | `skill_armor_percent` | `-dm56` | -40 | **-100** |
+| Conviction | 圣骑士 | 30 | `fireresist` | `-min(ln34,150)` | -30 | **-125** |
+| Conviction | 圣骑士 | 30 | `coldresist` | `-min(ln34,150)` | -30 | **-125** |
+| Conviction | 圣骑士 | 30 | `lightresist` | `-min(ln34,150)` | -30 | **-125** |
+| Sword Mastery | 野蛮人 | 1 | `passive_mastery_melee_th` | `ln12` | +28 | **+180** |
+| Sword Mastery | 野蛮人 | 1 | `passive_mastery_melee_dmg` | `ln34` | +28 | **+123** |
+| Axe Mastery | 野蛮人 | 1 | `passive_mastery_melee_th` | `ln12` | +28 | **+180** |
+| Axe Mastery | 野蛮人 | 1 | `passive_mastery_melee_dmg` | `ln34` | +28 | **+123** |
+| Mace Mastery | 野蛮人 | 1 | `passive_mastery_melee_th` | `ln12` | +28 | **+180** |
+| Mace Mastery | 野蛮人 | 1 | `passive_mastery_melee_dmg` | `ln34` | +28 | **+123** |
+| Pole Arm Mastery | 野蛮人 | 6 | `passive_mastery_melee_th` | `ln12` | +30 | **+182** |
+| Pole Arm Mastery | 野蛮人 | 6 | `passive_mastery_melee_dmg` | `ln34` | +28 | **+123** |
+| Throwing Mastery | 野蛮人 | 6 | `passive_mastery_throw_th` | `ln12` | +30 | **+182** |
+| Throwing Mastery | 野蛮人 | 6 | `passive_mastery_throw_dmg` | `ln34` | +28 | **+123** |
+| Spear Mastery | 野蛮人 | 6 | `passive_mastery_melee_th` | `ln12` | +30 | **+182** |
+| Spear Mastery | 野蛮人 | 6 | `passive_mastery_melee_dmg` | `ln34` | +28 | **+123** |
+| Taunt | 野蛮人 | 6 | `item_tohit_percent` | `ln12` | -5 | **-43** |
+| Taunt | 野蛮人 | 6 | `damagepercent` | `ln34` | -5 | **-43** |
+| Shout | 野蛮人 | 6 | `skill_armor_percent` | `ln12` | +100 | **+290** |
+| Increased Stamina | 野蛮人 | 12 | `skill_passive_staminapercent` | `ln12` | +30 | **+315** |
+| Concentrate | 野蛮人 | 18 | `skill_armor_percent` | `ln34` | +100 | **+290** |
+| Iron Skin | 野蛮人 | 18 | `skill_armor_percent` | `ln12` | +30 | **+220** |
+| Battle Cry | 野蛮人 | 18 | `skill_armor_percent` | `ln34` | -50 | **-88** |
+| Increased Speed | 野蛮人 | 24 | `velocitypercent` | `dm12` | +7 | **+50** |
+| Battle Orders | 野蛮人 | 24 | `item_maxmana_percent` | `ln34` | +35 | **+92** |
+| Battle Orders | 野蛮人 | 24 | `item_maxhp_percent` | `ln34` | +35 | **+92** |
+| Battle Orders | 野蛮人 | 24 | `skill_staminapercent` | `ln34` | +35 | **+92** |
+| Natural Resistance | 野蛮人 | 30 | `fireresist` | `dm12` | +0 | **+80** |
+| Natural Resistance | 野蛮人 | 30 | `lightresist` | `dm12` | +0 | **+80** |
+| Natural Resistance | 野蛮人 | 30 | `coldresist` | `dm12` | +0 | **+80** |
+| Summon Spirit Wolf | 德鲁伊 | 6 | `tohit` | `ln12` | +50 | **+525** |
+| Wearbear | 德鲁伊 | 6 | `damagepercent` | `ln12` | +55 | **+207** |
+| Wearbear | 德鲁伊 | 6 | `skill_armor_percent` | `ln34` | +25 | **+139** |
+| Summon Grizzly | 德鲁伊 | 30 | `damagepercent` | `ln12` | +25 | **+215** |
+| Claw Mastery | 刺客 | 1 | `passive_mastery_melee_th` | `ln12` | +30 | **+220** |
+| Claw Mastery | 刺客 | 1 | `passive_mastery_melee_dmg` | `ln34` | +35 | **+111** |
+| Quickness | 刺客 | 6 | `velocitypercent` | `dm12` | +15 | **+70** |
+| Weapon Block | 刺客 | 12 | `passive_weaponblock` | `dm12` | +20 | **+65** |
+| Fade | 刺客 | 18 | `fireresist` | `dm12` | +10 | **+75** |
+| Fade | 刺客 | 18 | `coldresist` | `dm12` | +10 | **+75** |
+| Fade | 刺客 | 18 | `lightresist` | `dm12` | +10 | **+75** |
+| Fade | 刺客 | 18 | `poisonresist` | `dm12` | +10 | **+75** |
+
 ## 武器百分比技能（伤害取决于武器，`skills.txt` 只有百分比）
 
 `SrcDam` = 使用的武器伤害百分比。这些技能的实际伤害 = 武器伤害 × SrcDam%

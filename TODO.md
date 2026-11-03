@@ -77,11 +77,12 @@
 > 判据 T1（每系一个胜场）/ T2（没有全能系）/ T3（等价交换）/ T4（数值可预演），
 > 场景矩阵 M1~M6，21 个技能系的现状盘点与推进顺序都已写在那份文件里。
 > **21 系体检表（自动生成、读 `mod/` 的当前状态）**：[docs/p2-trees.md](docs/p2-trees.md)
-> （`python3 -m tools.p2_trees`；手写的树归属有 8 项单测对着 skills.txt 校验）
-> **14 个未改动系的书面结论**：[docs/p2-healthy.md](docs/p2-healthy.md)
+> （`python3 -m tools.p2_trees`；手写的树归属由单测对着 skills.txt 校验）
+> **15 个未改动系的书面结论**：[docs/p2-healthy.md](docs/p2-healthy.md)
 > **改动审计（341 处数值下降逐条对账）**：[docs/p2-audit.md](docs/p2-audit.md)
 > **区域元素适配度（所有"区域平均系数"的唯一来源）**：[docs/p2-areas.md](docs/p2-areas.md)
-> 三份文档与 `docs/changelog.md` 的一致性有 6 项单测钉住（`tests/test_p2_docs.py`）
+> 文档一致性由 `tests/test_p2_docs.py` 钉住：状态计数、§3 胜场集 vs `TREES`、
+> 进度表 21 行、未改动系数目、各报告的新鲜度（mtime）
 
 - [x] **法师 · 火系（A2）已完成**：火掌握伤害 163%→100%，加 `passive_fire_pierce` −45%
       （`patches/p2_skills.py`）；75% 抗性处与冰系正好相等，0% 处更强、90% 处更弱
@@ -113,6 +114,7 @@
 - [x] 承认修不了：**野蛮人缺 AoE**（Whirlwind 判定硬编码）→ 已写入 [p2-healthy.md](docs/p2-healthy.md)
 - [x] **15 个未改动系的书面结论**：`docs/p2-healthy.md`
       （12 个"体检通过" + 2 个 T2 过强 + 1 个修不了；逐条写明胜场/依据/为何不动）
+      → 数字复核路径：`p1-skills.md` 的「被动/光环技能的关键数值」表
 - [ ] **L2 需要重新定义**：P1 改成"总量上升"后，"稀有度从彩票改里程碑"要重写
       （原计划是提高掉率，现在总量已经翻 2~4 倍，可能不需要）
 - [ ] **L4 废技能**：协同改不了，唯一杠杆是 `uniqueitems` 的 oskill 或 cube 配方（P3 允许）

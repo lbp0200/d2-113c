@@ -20,6 +20,37 @@ def read(name: str) -> str:
     return (DOCS / name).read_text(encoding="utf-8")
 
 
+def parse_section3_wins(plan: str) -> dict[tuple[str, str], set[str]]:
+    """从 plan §3 的手写表里抽出 (职业,系) -> 胜场集合。
+
+    这些表是手写的，所以最容易和 `TREES` 常量漂移 —— 一旦漂移，
+    读者会看到同一系在两份文件里赢不同的场景。
+    """
+    by_name = {v: k for k, v in CLASSES.items()}
+    out: dict[tuple[str, str], set[str]] = {}
+    cls = None
+    col = None
+    for line in plan.splitlines():
+        m = re.match(r"^### (.+) `(\w+)`$", line.strip())
+        if m:
+            cls = m.group(2)
+            col = None
+            continue
+        if not line.startswith("|"):
+            col = None
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if "现在赢在" in cells:
+            col = cells.index("现在赢在")
+            continue
+        if col is None or cls is None or not cells or cells[0].startswith("---"):
+            continue
+        if len(cells) <= col or cells[0] in ("系", ""):
+            continue
+        out[(cls, cells[0])] = set(re.findall(r"M[1-6]", cells[col]))
+    return out
+
+
 class DocsConsistency(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -27,6 +58,8 @@ class DocsConsistency(unittest.TestCase):
         cls.plan = read("p2-balance-plan.md")
         cls.trees = read("p2-trees.md")
         cls.healthy = read("p2-healthy.md")
+        cls.readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        cls.todo = (ROOT / "TODO.md").read_text(encoding="utf-8")
 
     def test_plan_stats_line_matches_trees(self):
         m = re.search(
@@ -107,3 +140,47 @@ class DocsConsistency(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Section3MatchesTrees(unittest.TestCase):
+    """plan §3 的手写胜场集必须和 `TREES` 常量一致（同一系不能有两个答案）。"""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.plan = (DOCS / "p2-balance-plan.md").read_text(encoding="utf-8")
+        cls.parsed = parse_section3_wins(cls.plan)
+
+    def test_every_tree_appears_in_section3(self):
+        missing = [(t["cls"], t["tree"]) for t in TREES if (t["cls"], t["tree"]) not in self.parsed]
+        self.assertEqual(missing, [], f"§3 缺这些系的行：{missing}")
+
+    def test_wins_match_trees_constant(self):
+        bad = []
+        for t in TREES:
+            got = self.parsed.get((t["cls"], t["tree"]))
+            want = set(t["wins"])
+            if got is not None and got != want:
+                bad.append(f"{CLASSES[t['cls']]}·{t['tree']}: §3={sorted(got) or '无'} vs TREES={sorted(want) or '无'}")
+        self.assertEqual(bad, [], "§3 的胜场集与 TREES 不一致：\n" + "\n".join(bad))
+
+    def test_no_tree_says_it_is_not_a_tree(self):
+        # 曾经用「纯被动不算系」绕开死内容判定，那句话不该再出现
+        self.assertNotIn("不参与死内容判定", self.plan)
+        self.assertNotIn('本身不构成"系"', self.plan)
+        self.assertNotIn("本身不构成「系」", self.plan)
+
+
+class UntouchedCountConsistent(unittest.TestCase):
+    """"15 个未改动系"这个数字必须在三份文件里一致。"""
+
+    def test_all_docs_say_15(self):
+        docs = {
+            "README.md": (ROOT / "README.md").read_text(encoding="utf-8"),
+            "TODO.md": (ROOT / "TODO.md").read_text(encoding="utf-8"),
+            "docs/p2-balance-plan.md": (DOCS / "p2-balance-plan.md").read_text(encoding="utf-8"),
+            "docs/p2-healthy.md": (DOCS / "p2-healthy.md").read_text(encoding="utf-8"),
+        }
+        for name, text in docs.items():
+            self.assertIn("15 个", text, f"{name} 没写「15 个未改动系」")
+            for stale in ("13 个未改动", "14 个未改动", "13 个没动", "14 个没动"):
+                self.assertNotIn(stale, text, f"{name} 里还有旧数字 {stale}")

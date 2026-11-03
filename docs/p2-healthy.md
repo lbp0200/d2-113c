@@ -6,7 +6,13 @@
 >
 > 这份文件回答一个问题：**凭什么判定它们健康？**
 > 每一行都要能指出"它赢哪个场景"、"赢的机制是什么"、"本轮为什么不动"。
-> 数字都能在 [p1-skills.md](p1-skills.md) / [p1-immunity.md](p1-immunity.md) / [p2-trees.md](p2-trees.md) 里复核。
+> 数字在哪里复核：
+> - **被动/光环类**（Fade +75%、Battle Orders +92%、灰熊 +215%、Pierce +100%、自然抗性 +80%）
+>   → [p1-skills.md](p1-skills.md) 的「被动 / 光环技能的关键数值」表（由 `passivestat`/`aurastat` 直接求值）
+> - **降抗类**（Conviction −125%、Lower Resist −70%）→ 同文件的「降抗审计」
+> - **伤害/法力**（Fire Claws 99.4、Fists of Fire 156.5）→ 同文件的各职业伤害表
+> - **环境系数与归零区域** → [p2-areas.md](p2-areas.md)
+> - **免疫分布** → [p1-immunity.md](p1-immunity.md)
 
 ---
 

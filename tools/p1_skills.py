@@ -169,6 +169,53 @@ def _eval_calc(calc: str, p: list[str], maxlvl: int) -> tuple[float, float] | No
     return None
 
 
+def support_values(ctx: Ctx) -> list[str]:
+    """被动技能 / 光环技能的关键数值（`passivestat` / `aurastat` 求值）。
+
+    为什么需要这张表：像「Fade +75% 全抗」「Battle Orders +92% 生命」「灰熊 +215% 伤害」
+    这类数字，在别的报告里查不到 —— 它们不在伤害列里。写文档时引用就必须有地方能复核，
+    否则等于让读者相信一句无法验证的话。
+    """
+    tf = ctx.load("skills.txt")
+    c = {n: tf.need(n) for n in
+         ["skill", "charclass", "reqlevel", "maxlvl"] +
+         [f"Param{i}" for i in range(1, 9)] +
+         [f"passivestat{i}" for i in range(1, 4)] + [f"passivecalc{i}" for i in range(1, 4)] +
+         [f"aurastat{i}" for i in range(1, 7)] + [f"aurastatcalc{i}" for i in range(1, 7)]}
+
+    rows = []
+    for r in tf.rows:
+        if not r or not r[0]:
+            continue
+        cls = tf.get(r, c["charclass"]).strip().lower()
+        if cls not in CLASSES:
+            continue
+        params = [tf.get(r, c[f"Param{i}"]) for i in range(1, 9)]
+        maxlvl = int(float(tf.get(r, c["maxlvl"]) or 1))
+        for kind, n in (("passive", 3), ("aura", 6)):
+            for i in range(1, n + 1):
+                scol = f"passivestat{i}" if kind == "passive" else f"aurastat{i}"
+                ccol = f"passivecalc{i}" if kind == "passive" else f"aurastatcalc{i}"
+                stat, calc = tf.get(r, c[scol]), tf.get(r, c[ccol])
+                if not stat or not calc or calc.strip("'\"").startswith("stat("):
+                    continue
+                ev = _eval_calc(calc, params, maxlvl)
+                if ev is None:
+                    continue
+                rows.append((r[0], cls, tf.get(r, c["reqlevel"]), stat,
+                             calc.strip("'\""), ev[0], ev[1]))
+
+    L = ["## 被动 / 光环技能的关键数值（用于复核非伤害类声明）", ""]
+    L += ["这些数字不在伤害列里（伤害表查不到），但很多结论要靠它们 —— ",
+          "比如「Fade +75% 全抗」「Battle Orders +92% 生命」「灰熊 +215% 伤害」。", ""]
+    L += ["| 技能 | 职业 | 需等级 | stat | 公式 | L1 | L20 |", "|---|---|---:|---|---|---:|---:|"]
+    for skill, cls, req, stat, calc, l1, l20 in rows:
+        L.append(f"| {skill} | {CLASSES[cls]} | {req} | `{stat}` | `{calc}` | "
+                 f"{l1:+.0f} | **{l20:+.0f}** |")
+    L.append("")
+    return L
+
+
 def poison_total(ctx: Ctx) -> list[str]:
     """毒系的"总量"在哪：`EMin/EMax` 是**每帧速率**，`ELen` 才是持续时间（帧）。
 
@@ -452,6 +499,7 @@ def build_report(ctx: Ctx, only_class: str | None) -> str:
     L += audit
     L += resistance_audit(ctx)
     L += poison_total(ctx)
+    L += support_values(ctx)
 
     if weapon:
         add("## 武器百分比技能（伤害取决于武器，`skills.txt` 只有百分比）")
