@@ -10,7 +10,8 @@
 
 ## A · 阻塞中：需要先有游戏
 
-全部依赖 VM 里能跑起 1.13c。执行顺序见 [runbook.md](docs/runbook.md)。
+全部依赖 VM 里能跑起 1.13c。执行顺序见 [runbook.md](docs/runbook.md)，
+**逐项验证与失败处置见 [verify.md](docs/verify.md)**（A1/B1/B2 是优先级最高的三条）。
 
 ### A1 · 环境
 

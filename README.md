@@ -7,6 +7,7 @@
 - **待办与阻塞项：[TODO.md](TODO.md)**
 - 路线与决策记录：[PLAN.md](PLAN.md)
 - 游戏到手后的执行顺序：[docs/runbook.md](docs/runbook.md)
+- **进游戏后的验证清单：[docs/verify.md](docs/verify.md)**（每项：验什么 / 怎么验 / 判据 / 不通过改哪里）
 - **改了补丁之后**：`python3 -m tools.all --reports` 一条命令重生成 `mod/` 与全部报告
   （顺序有依赖：先 build 再分析；漏跑会被 `tests/test_p2_docs.py` 抓到）
 - 装备层（进行中）：**[docs/p3-items.md](docs/p3-items.md)** —— 380 件暗金的体检表
