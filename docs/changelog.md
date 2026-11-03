@@ -2,6 +2,14 @@
 
 > 由 `tools/build.py` 自动生成，勿手改。基线：`vanilla/`
 
+## CubeMain.txt
+
+| 列 | 改动行数 | 示例 |
+|---|---:|---|
+| `(追加行)` | 4 | `magic helm + jewel + io + gpr -> fire pierce helm`: (空) → magic helm + jewel + io + gpr -> fire pierce helm；`magic helm + jewel + io + gpy -> lightning pierce helm`: (空) → magic helm + jewel + io + gpy -> lightning pierce helm；`magic helm + jewel + io + gpb -> cold pierce helm`: (空) → magic helm + jewel + io + gpb -> cold pierce helm；…另 1 行 |
+
+理由：P2 元素穿透 craft（cold）：给没有掌握技能的职业一条降抗途径；P2 元素穿透 craft（fire）：给没有掌握技能的职业一条降抗途径；P2 元素穿透 craft（lightning）：给没有掌握技能的职业一条降抗途径；P2 元素穿透 craft（poison）：给没有掌握技能的职业一条降抗途径
+
 ## MonStats.txt
 
 | 列 | 改动行数 | 示例 |

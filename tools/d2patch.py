@@ -520,6 +520,43 @@ class Patch:
                 return Selection(self, [])
             raise SystemExit(f"[错误] {self.filename}: {e}\n  → 补丁：{self.why}") from e
 
+    def append_row(self, values: dict[str, object]) -> "Selection":
+        """在表尾追加一行（新增 cube 配方 / 新增 TC 行都靠它）。
+
+        - 列名必须是表头里已有的，写错直接报错（不做"猜列名"）。
+        - 没给的列填空；`*eol` 缺省填 `0`。
+        - **幂等**：如果已经存在一行 `key 列` 相同且内容完全一致，就不再追加。
+        """
+        h = self.tf.header
+        for col in values:
+            if col not in h:
+                raise SystemExit(
+                    f"[错误] {self.filename}: 没有列 {col!r}\n  → 追加行：{values!r}"
+                )
+        row = [""] * len(h)
+        for col, v in values.items():
+            row[h.index(col)] = v if isinstance(v, str) else format_number(v)
+        if "*eol" in h and not row[h.index("*eol")]:
+            row[h.index("*eol")] = "0"
+
+        key = ""
+        if self.key_col and self.key_col in h:
+            key = row[h.index(self.key_col)]
+
+        if key:
+            ki = h.index(self.key_col)
+            for existing in self.tf.rows:
+                if self.tf.get(existing, ki) == key and list(existing) == row:
+                    return Selection(self, [])  # 已经加过，幂等跳过
+
+        self.tf.append(row)
+        i = len(self.tf.rows) - 1
+        self.ctx.record(
+            Change(self.filename, key or f"#{i + 1}", "(追加行)", "",
+                   values.get("description") or key or "(新行)", self.why)
+        )
+        return Selection(self, [i])
+
     def only(self, col: str, values: Iterable[str]) -> Selection:
         return self.where(col, one_of(*values))
 

@@ -74,12 +74,15 @@
 
 - [x] **法师 · 火系（A2）已完成**：火掌握伤害 163%→100%，加 `passive_fire_pierce` −45%
       （`patches/p2_skills.py`）；75% 抗性处与冰系正好相等，0% 处更强、90% 处更弱
-- [ ] **德鲁伊 · 火系**（最大空洞）：他没有火掌握技能，第 1 层改不了 → 走装备层
+- [x] **元素穿透 craft 已完成**：`patches/p2_items.py` 新增 4 个配方
+      （魔法头盔 + 珠宝 + 埃欧 r16 + 完美宝石 → craft 头盔，`pierce-X 10~20` /
+      `extra-X 10~15%` / `res-X 20~30`）。选 craft 是因为**不需要改 Big5 字符串表**
+- [ ] **德鲁伊 · 火系**（最大空洞）：他没火掌握，装备层已给穿透，
+      **还差技能层的本体伤害**（Armageddon 25.7 vs Tornado 43.8）
 - [ ] **死灵 · 毒系**：`passive_pois_mastery`/`_pierce` 无人发放，可挂到 Poison Dagger
 - [ ] **刺客 · 火陷阱 / 亚马逊 · 元素弓**：和德鲁伊共用一件穿透装备即可
 - [ ] **法师 · 电系**：要不要给 `passive_ltng_pierce`（伤害已最高，给多少要小心）
-- [ ] **设计那件"穿透装备"**（符文之语，PlugY 已开天梯符文之语）
-      这是唯一能同时帮到德鲁伊/刺客/亚马逊的手段；装备上的穿透会自动显示 tooltip
+- [ ] 验证 craft 配方能否在游戏里真的合成（`cubemain.txt` 追加行是否被读）
 - [ ] 只观察、不砍：**冰法 / 锤子骑**同时赢 4 个场景（违反 T2），
       但按 T3 不能凭空拿走 → 只能抬高别人的天花板
 - [ ] 承认修不了：**野蛮人缺 AoE**（Whirlwind 判定硬编码）
@@ -109,8 +112,8 @@
 | 精英/暗金 Good | `Citem` 3→**40**、`Uitem` 4→**20** | `patches/economy.py` |
 | 箱子 | **一律不动** | — |
 
-当前补丁规模：**449 处改动 / 3 张表**
-（`MonStats.txt` 332 + `TreasureClassEx.txt` 107 + `Skills.txt` 10）。
+当前补丁规模：**453 处改动 / 4 张表**
+（`MonStats.txt` 332 + `TreasureClassEx.txt` 107 + `Skills.txt` 10 + `CubeMain.txt` 4）。
 
 ---
 
