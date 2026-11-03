@@ -28,6 +28,7 @@ STEPS = [
     ("tools.p2_trees", "21 系体检表", False),
     ("tools.p2_areas", "区域元素适配度（区域平均系数的唯一来源）", False),
     ("tools.p2_audit", "改动审计（数值下降对账）", False),
+    ("tools.p3_items", "装备体检表（暗金）", False),
 ]
 
 
