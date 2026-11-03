@@ -24,12 +24,12 @@
 取 4 会让牛场冲到 500/h（原 LK 的 2.35 倍），毕业后那条长尾会被砍掉一半以上，
 违反 N9（不缩短毕业后的刷）。
 
-想改力度就改这一个数字：`MONSTER_PICKS = 2`。
+想改力度就改这一个数字：`MONSTER_PICKS = 4`。
 """
 
 from tools.d2patch import matches, patch
 
-MONSTER_PICKS = 2
+MONSTER_PICKS = 4
 
 # 地狱普通怪物的主掉落 TC（按攻击类型分家族），Picks 1 → MONSTER_PICKS
 patch(

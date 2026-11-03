@@ -28,8 +28,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 # 路线 → (代表 TC, 每小时事件数)。事件密度是**假设**，写在报告里让人自己改。
 ROUTES: list[tuple[str, str, float]] = [
-    ("LK 超箱 6 个（15 秒/趟）", "Act 3 (H) Super A", 6 * 3600 / 15),
-    ("普通箱子（同趟顺手开）", "Act 3 (H) Chest B", 6 * 3600 / 15),
+    ("箱子（LK 6 箱/趟、15 秒/趟）", "Act 3 (H) Chest B", 6 * 3600 / 15),
     ("牛场清场（约 50 杀/秒上限的 1/6）", "Cow (H)", 3000),
     ("白怪清场（Act5 近战）", "Act 5 (H) H2H A", 3000),
     ("精英怪（一场 8 群、5 分钟一趟）", "Act 5 (H) Champ A", 96),
@@ -100,6 +99,42 @@ def report(ctx: Ctx, players: float = 8) -> tuple[list[list[str]], list[str]]:
 
 HEADER = ["路线", "代表 TC", "事件/小时", "Good/事件", "Good/小时", "符文档位"]
 
+# 怪物层级：S2 要求「打硬目标更值」。这里固定检查 per-event 的单调性。
+TIERS = [
+    ("白怪", "Act 5 (H) H2H A"),
+    ("精英", "Act 5 (H) Champ A"),
+    ("暗金", "Act 5 (H) Unique A"),
+    ("超级暗金", "Act 5 (H) Super A"),
+]
+
+
+def tier_values(ctx: Ctx, players: float) -> list[tuple[str, str, float]]:
+    tc = TreasureClasses(ctx.load("treasureclassex.txt"))
+    return [(lbl, name, good_prob(tc, name, players))
+            for lbl, name in TIERS if name in tc]
+
+
+def monotonic(vals: list[tuple[str, str, float]]) -> bool:
+    return all(vals[i][2] < vals[i + 1][2] for i in range(len(vals) - 1))
+
+
+def tier_check(base: list[tuple[str, str, float]],
+               after: list[tuple[str, str, float]] | None) -> list[str]:
+    out = ["## 怪物层级检查（S2：打硬目标更值）", ""]
+    if after:
+        out += ["| 层级 | TC | 现状 | 打补丁后 |", "|---|---|---:|---:|"]
+        for (lbl, name, v), (_, _, v2) in zip(base, after):
+            out.append(f"| {lbl} | {name} | {v:.2%} | **{v2:.2%}** |")
+        ok = monotonic(after)
+        out += ["", ("✅ 单调递增：白怪 < 精英 < 暗金 < 超级暗金" if ok
+                     else "❌ **层级被打破**：某档的实际回报低于更低档，S2 失效"), ""]
+    else:
+        out += ["| 层级 | TC | Good/事件 |", "|---|---|---:|"]
+        for lbl, name, v in base:
+            out.append(f"| {lbl} | {name} | {v:.2%} |")
+        out += ["", ("✅ 单调递增" if monotonic(base) else "❌ 层级被打破"), ""]
+    return out
+
 
 def render(title: str, rows: list[list[str]], warns: list[str], players: float) -> list[str]:
     L = [f"## {title}", ""]
@@ -116,7 +151,8 @@ def render(title: str, rows: list[list[str]], warns: list[str], players: float) 
 
 
 def build_md(before: list[list[str]], after: list[list[str]] | None,
-             warns: list[str], players: float) -> str:
+             warns: list[str], players: float, ctx: Ctx | None = None,
+             overlay_ctx: Ctx | None = None) -> str:
     L = [
         "# P1 · 经济结构报告（收益挂钩挑战）",
         "",
@@ -139,7 +175,16 @@ def build_md(before: list[list[str]], after: list[list[str]] | None,
         "这些数字只用来比**量级**，不要当预测。真实效率只有进游戏才能测。",
         "",
     ]
-    L += render("现状（`vanilla/`）", before, warns, players)
+    L += ["## 说明：`Super` 不是箱子", "",
+          "`Act N (H) Super A/B/C` 长得很像箱子（`Picks=-4` 保证 4 件），但判定它是**怪物**：",
+          "它没有 `gld` 条目，却直接引用 `Cpot`（药水）；而箱子 TC 一定含 `gld`。",
+          "所以 `Super` = **超级暗金怪**（super unique），不是 LK 那 6 个超箱。",
+          "LK 的箱子走 `Act 3 (H) Chest B`。", ""]
+    if ctx is not None:
+        base_tiers = tier_values(ctx, players)
+        after_tiers = tier_values(overlay_ctx, players) if overlay_ctx is not None else None
+        L += tier_check(base_tiers, after_tiers)
+    base_md = render("现状（`vanilla/`）", before, warns, players)
     if after is not None:
         L += render("打上补丁后（`--overlay mod`）", after, [], players)
         L += ["### 变化", ""]
@@ -156,8 +201,8 @@ def build_md(before: list[list[str]], after: list[list[str]] | None,
             L.append(f"| {b[0]} | {nb:.0f} | {na:.0f} | {mult} |")
         L.append("")
         L += [
-            "**看这张表的方法**：目标不是「每条路线都变高」，而是「打怪路线 ≥ 开箱路线」，",
-            "而且总产出大致持平（P1 毕业时间不变）。",
+            "**看这张表的方法**：目标不是「每条路线都变高」，而是"
+            "「**打怪路线 > 开箱路线**」——打怪要比翻箱子更值，玩家自然会去打怪。",
             "",
         ]
     return "\n".join(L).rstrip() + "\n"
@@ -180,7 +225,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.overlay or args.compare:
         ov = args.overlay or args.compare
         after, _ = report(Ctx(vanilla=args.vanilla, out=ROOT / "mod", overlay=ov), args.players)
-    md = build_md(before, after, warns, args.players)
+    overlay_ctx = None
+    if after is not None:
+        overlay_ctx = Ctx(vanilla=args.vanilla, out=ROOT / "mod", overlay=args.overlay or args.compare)
+    md = build_md(before, after, warns, args.players, base_ctx, overlay_ctx)
     if args.stdout:
         print(md)
     else:
