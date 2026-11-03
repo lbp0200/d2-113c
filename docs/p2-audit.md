@@ -8,15 +8,14 @@
 
 | 表 | 数值上升 | 数值下降 | 非数值改动 | 新增行 |
 |---|---:|---:|---:|---:|
-| CubeMain.txt | 0 | 0 | 0 | 4 |
 | Hireling.txt | 6 | 5 | 0 | 0 |
 | MonStats.txt | 0 | 332 | 0 | 0 |
 | Runes.txt | 5 | 5 | 8 | 0 |
 | SetItems.txt | 0 | 0 | 6 | 0 |
 | Skills.txt | 50 | 9 | 10 | 0 |
 | TreasureClassEx.txt | 107 | 0 | 0 | 0 |
-| UniqueItems.txt | 6 | 0 | 20 | 0 |
-| **合计** | **174** | **351** | **44** | **4** |
+| UniqueItems.txt | 6 | 0 | 38 | 0 |
+| **合计** | **174** | **351** | **62** | **0** |
 
 ## 所有「数值下降」（必须能被解释）
 
@@ -405,6 +404,12 @@
 | UniqueItems.txt | `Razortine` | prop7 | `` | `ease` |
 | UniqueItems.txt | `Razortine` | min7 | `` | `-20` |
 | UniqueItems.txt | `Razortine` | max7 | `` | `-20` |
+| UniqueItems.txt | `Wormskull` | prop6 | `` | `extra-pois` |
+| UniqueItems.txt | `Wormskull` | min6 | `` | `20` |
+| UniqueItems.txt | `Wormskull` | max6 | `` | `20` |
+| UniqueItems.txt | `Hawkmail` | prop6 | `` | `extra-cold` |
+| UniqueItems.txt | `Hawkmail` | min6 | `` | `10` |
+| UniqueItems.txt | `Hawkmail` | max6 | `` | `15` |
 | UniqueItems.txt | `Venomsward` | prop6 | `` | `hp` |
 | UniqueItems.txt | `Venomsward` | min6 | `` | `40` |
 | UniqueItems.txt | `Venomsward` | max6 | `` | `60` |
@@ -416,15 +421,21 @@
 | UniqueItems.txt | `Heavenly Garb` | prop7 | `` | `hp` |
 | UniqueItems.txt | `Heavenly Garb` | min7 | `` | `30` |
 | UniqueItems.txt | `Heavenly Garb` | max7 | `` | `30` |
+| UniqueItems.txt | `Blackhorn's Face` | prop7 | `` | `pierce-ltng` |
+| UniqueItems.txt | `Blackhorn's Face` | min7 | `` | `15` |
+| UniqueItems.txt | `Blackhorn's Face` | max7 | `` | `15` |
+| UniqueItems.txt | `Blackhorn's Face` | prop8 | `` | `extra-ltng` |
+| UniqueItems.txt | `Blackhorn's Face` | min8 | `` | `10` |
+| UniqueItems.txt | `Blackhorn's Face` | max8 | `` | `10` |
 | UniqueItems.txt | `Gravepalm` | prop6 | `` | `crush` |
 | UniqueItems.txt | `Gravepalm` | min6 | `` | `10` |
 | UniqueItems.txt | `Gravepalm` | max6 | `` | `10` |
+| UniqueItems.txt | `Infernostride` | prop10 | `` | `extra-fire` |
+| UniqueItems.txt | `Infernostride` | min10 | `` | `10` |
+| UniqueItems.txt | `Infernostride` | max10 | `` | `15` |
+| UniqueItems.txt | `Infernostride` | prop11 | `` | `pierce-fire` |
+| UniqueItems.txt | `Infernostride` | min11 | `` | `15` |
+| UniqueItems.txt | `Infernostride` | max11 | `` | `15` |
 | UniqueItems.txt | `Steelpillar` | prop7 | `` | `ease` |
 | UniqueItems.txt | `Steelpillar` | min7 | `` | `-25` |
 | UniqueItems.txt | `Steelpillar` | max7 | `` | `-25` |
-
-新增行：
-- CubeMain.txt：`magic helm + jewel + io + gpr -> fire pierce helm`
-- CubeMain.txt：`magic helm + jewel + io + gpy -> lightning pierce helm`
-- CubeMain.txt：`magic helm + jewel + io + gpb -> cold pierce helm`
-- CubeMain.txt：`magic helm + jewel + io + gpg -> poison pierce helm`

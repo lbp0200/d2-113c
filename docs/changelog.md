@@ -2,14 +2,6 @@
 
 > 由 `tools/build.py` 自动生成，勿手改。基线：`vanilla/`
 
-## CubeMain.txt
-
-| 列 | 改动行数 | 示例 |
-|---|---:|---|
-| `(追加行)` | 4 | `magic helm + jewel + io + gpr -> fire pierce helm`: (空) → magic helm + jewel + io + gpr -> fire pierce helm；`magic helm + jewel + io + gpy -> lightning pierce helm`: (空) → magic helm + jewel + io + gpy -> lightning pierce helm；`magic helm + jewel + io + gpb -> cold pierce helm`: (空) → magic helm + jewel + io + gpb -> cold pierce helm；…另 1 行 |
-
-理由：P2 元素穿透 craft（cold）：给没有掌握技能的职业一条降抗途径；P2 元素穿透 craft（fire）：给没有掌握技能的职业一条降抗途径；P2 元素穿透 craft（lightning）：给没有掌握技能的职业一条降抗途径；P2 元素穿透 craft（poison）：给没有掌握技能的职业一条降抗途径
-
 ## Hireling.txt
 
 | 列 | 改动行数 | 示例 |
@@ -111,16 +103,25 @@
 
 | 列 | 改动行数 | 示例 |
 |---|---:|---|
-| `prop7` | 4 | `Steelpillar`: (空) → ease；`Venomsward`: (空) → regen；`Heavenly Garb`: (空) → hp；…另 1 行 |
-| `min7` | 4 | `Steelpillar`: (空) → -25；`Venomsward`: (空) → 15；`Heavenly Garb`: (空) → 30；…另 1 行 |
-| `max7` | 4 | `Steelpillar`: (空) → -25；`Venomsward`: (空) → 15；`Heavenly Garb`: (空) → 30；…另 1 行 |
-| `prop6` | 3 | `Venomsward`: (空) → hp；`Heavenly Garb`: att-undead → att-demon；`Gravepalm`: (空) → crush |
-| `min6` | 3 | `Venomsward`: (空) → 40；`Gravepalm`: (空) → 10；`Razortine`: 30 → 60 |
-| `max6` | 3 | `Venomsward`: (空) → 60；`Gravepalm`: (空) → 10；`Razortine`: 50 → 80 |
+| `prop7` | 5 | `Steelpillar`: (空) → ease；`Venomsward`: (空) → regen；`Heavenly Garb`: (空) → hp；…另 2 行 |
+| `min7` | 5 | `Steelpillar`: (空) → -25；`Venomsward`: (空) → 15；`Heavenly Garb`: (空) → 30；…另 2 行 |
+| `max7` | 5 | `Steelpillar`: (空) → -25；`Venomsward`: (空) → 15；`Heavenly Garb`: (空) → 30；…另 2 行 |
+| `prop6` | 5 | `Venomsward`: (空) → hp；`Heavenly Garb`: att-undead → att-demon；`Gravepalm`: (空) → crush；…另 2 行 |
+| `min6` | 5 | `Venomsward`: (空) → 40；`Gravepalm`: (空) → 10；`Razortine`: 30 → 60；…另 2 行 |
+| `max6` | 5 | `Venomsward`: (空) → 60；`Gravepalm`: (空) → 10；`Razortine`: 50 → 80；…另 2 行 |
 | `prop5` | 1 | `Heavenly Garb`: dmg-undead → dmg-demon |
 | `min3` | 1 | `Hawkmail`: 15 → 30 |
 | `max3` | 1 | `Hawkmail`: 15 → 30 |
 | `min5` | 1 | `Hawkmail`: 10 → 25 |
 | `max5` | 1 | `Hawkmail`: 10 → 25 |
+| `prop10` | 1 | `Infernostride`: (空) → extra-fire |
+| `min10` | 1 | `Infernostride`: (空) → 10 |
+| `max10` | 1 | `Infernostride`: (空) → 15 |
+| `prop11` | 1 | `Infernostride`: (空) → pierce-fire |
+| `min11` | 1 | `Infernostride`: (空) → 15 |
+| `max11` | 1 | `Infernostride`: (空) → 15 |
+| `prop8` | 1 | `Blackhorn's Face`: (空) → extra-ltng |
+| `min8` | 1 | `Blackhorn's Face`: (空) → 10 |
+| `max8` | 1 | `Blackhorn's Face`: (空) → 10 |
 
-理由：P3 Gravepalm：补 crush 10（低阶 CB 手套）；P3 Hawkmail：冰抗 15→30、跑速 10→25；P3 Heavenly Garb：对不死 → 对恶魔 + hp 30；P3 Razortine：伤害 30-50→60-80、ease -20%；P3 Steelpillar：力需 165 举不起来 → ease -25%；P3 Venomsward：只有毒抗 → 补 hp 50 + regen 15
+理由：P3 Gravepalm：补 crush 10（低阶 CB 手套）；P3 Hawkmail：冰抗 15→30、跑速 10→25；P3 Heavenly Garb：对不死 → 对恶魔 + hp 30；P3 Razortine：伤害 30-50→60-80、ease -20%；P3 Steelpillar：力需 165 举不起来 → ease -25%；P3 Venomsward：只有毒抗 → 补 hp 50 + regen 15；P3 冰系中阶：Hawkmail 补 extra-cold 10~15；P3 毒系中阶：Wormskull 补 extra-pois 20（原版没有任何 extra-pois 装备）；P3 火系中阶：Infernostride 补 extra-fire 10~15 + pierce-fire 15；P3 电系中阶：Blackhorn's Face 补 pierce-ltng 15 + extra-ltng 10

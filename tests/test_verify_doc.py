@@ -32,7 +32,7 @@ class VerifyDoc(unittest.TestCase):
         drops = (ROOT / "patches" / "drops.py").read_text(encoding="utf-8")
         self.assertIn("MONSTER_PICKS", drops)
         self.assertIn("MONSTER_PICKS", TEXT)
-        for f in ("p2_skills.py", "p2_items.py", "economy.py", "balance.py"):
+        for f in ("p2_skills.py", "p3_uniques.py", "p3_runewords.py", "economy.py", "balance.py"):
             self.assertTrue((ROOT / "patches" / f).exists(), f"缺 {f}")
 
     def test_priority_section_names_three_items(self):

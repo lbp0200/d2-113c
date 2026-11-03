@@ -110,9 +110,11 @@
 
 - [x] **法师 · 火系（A2）已完成**：火掌握伤害 163%→100%，加 `passive_fire_pierce` −45%
       （`patches/p2_skills.py`）；75% 抗性处与冰系正好相等，0% 处更强、90% 处更弱
-- [x] **元素穿透 craft 已完成**：`patches/p2_items.py` 新增 4 个配方
-      （魔法头盔 + 珠宝 + 埃欧 r16 + 完美宝石 → craft 头盔，`pierce-X 10~20` /
-      `extra-X 10~15%` / `res-X 20~30`）。选 craft 是因为**不需要改 Big5 字符串表**
+- [x] **元素强化已改道**：原来的 4 条 cube craft 配方**已停用**
+      （`patches/_disabled_cubemain_crafts.py`）—— 整合版的 `CubeMain.txt` 一碰就会
+      整表覆盖掉人家 75+ 条自定义合成公式。
+      现在改为 **4 件元素主题的中阶暗金**（`patches/p3_uniques.py`）：
+      `Infernostride`（火）、`Hawkmail`（冰）、`Blackhorn's Face`（电）、`Wormskull`（毒）
 - [x] **德鲁伊 · 火系已完成**：法力 Armageddon 35→25 / Volcano 25→16，
       伤害 ×1.25 / ×1.30 → 伤害/法力 25.7→43.2、9.5→17.5（风德 Tornado 43.8）
       **误判更正**：火德不缺伤害（单发是 Tornado 的 2 倍），缺的是可持续性

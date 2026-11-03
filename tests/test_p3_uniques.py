@@ -72,6 +72,55 @@ class ReworkedItems(unittest.TestCase):
         self.assertIn("hp", m)
 
 
+class ElementalMidTier(unittest.TestCase):
+    """4 件「元素强化中阶暗金」—— 替代被停用的 cube craft 配方。"""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.u = load("uniqueitems.txt")
+        cls.rows = {r[0]: r for r in cls.u.rows if r and r[0]}
+
+    def test_each_element_has_one_item(self):
+        expect = {
+            "Infernostride": ("extra-fire", "pierce-fire"),
+            "Hawkmail": ("extra-cold",),
+            "Blackhorn's Face": ("pierce-ltng", "extra-ltng"),
+            "Wormskull": ("extra-pois",),
+        }
+        for name, codes in expect.items():
+            got = mods(self.u, self.rows[name])
+            for code in codes:
+                self.assertIn(code, got, f"{name} 缺少 {code}")
+
+    def test_poison_mastery_exists_somewhere(self):
+        # 原版**没有任何装备**给 extra-pois，这一条是全新的
+        found = [n for n, r in self.rows.items() if "extra-pois" in mods(self.u, r)]
+        self.assertTrue(found, "全表找不到 extra-pois —— 毒系技能伤害类装备缺失")
+
+    def test_values_are_mid_tier_not_endgame(self):
+        # 不许超过格里风（20 穿透 / 15 伤害）那一档
+        for name in ("Infernostride", "Blackhorn's Face"):
+            got = mods(self.u, self.rows[name])
+            for code, (lo, hi) in got.items():
+                if code.startswith(("pierce-", "extra-")):
+                    self.assertLessEqual(float(hi), 20, f"{name} 的 {code} 超过 20，过强了")
+
+
+class CubeMainMustNotShip(unittest.TestCase):
+    """整合版的 CubeMain 有 75+ 条自定义公式 —— 我们绝对不能输出这张表。"""
+
+    def test_cubemain_not_in_mod(self):
+        p = ROOT / "mod" / "data" / "global" / "excel" / "CubeMain.txt"
+        self.assertFalse(p.exists(),
+                         "mod/ 里出现了 CubeMain.txt —— 会整表覆盖整合版的自定义合成公式！")
+
+    def test_p2_items_is_disabled(self):
+        self.assertFalse((ROOT / "patches" / "p2_items.py").exists(),
+                         "p2_items.py 必须保持停用（改名以下划线开头）")
+        self.assertTrue((ROOT / "patches" / "_disabled_cubemain_crafts.py").exists(),
+                        "停用的配方应该保留成 _disabled_* 文件，作为决策记录")
+
+
 class DoNotTouch(unittest.TestCase):
     """被数据判定为"不弱"的 5 件 —— 一个字段都不许改。"""
 
