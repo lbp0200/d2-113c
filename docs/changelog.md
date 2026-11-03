@@ -31,6 +31,17 @@
 
 理由：地狱抗性封顶 100：免疫数量不变，但任何降抗都能生效（排除 1000 的设计性绝对免疫）
 
+## Runes.txt
+
+| 列 | 改动行数 | 示例 |
+|---|---:|---|
+| `T1Code1` | 1 | `Runeword116`: light → aura |
+| `T1Param1` | 1 | `Runeword116`: (空) → Conviction |
+| `T1Min1` | 1 | `Runeword116`: 5 → 3 |
+| `T1Max1` | 1 | `Runeword116`: 5 → 3 |
+
+理由：P3 中间层降抗：Radiance 的『光环半径 +5』换成『信念 L3（−40%）』（补噩梦→地狱之间的降抗空档，见 docs/p3-runes-plan.md）
+
 ## Skills.txt
 
 | 列 | 改动行数 | 示例 |

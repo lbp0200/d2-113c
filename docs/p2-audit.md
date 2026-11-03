@@ -11,9 +11,10 @@
 | CubeMain.txt | 0 | 0 | 0 | 4 |
 | Hireling.txt | 6 | 5 | 0 | 0 |
 | MonStats.txt | 0 | 332 | 0 | 0 |
+| Runes.txt | 0 | 2 | 2 | 0 |
 | Skills.txt | 50 | 9 | 10 | 0 |
 | TreasureClassEx.txt | 107 | 0 | 0 | 0 |
-| **合计** | **163** | **346** | **10** | **4** |
+| **合计** | **163** | **348** | **12** | **4** |
 
 ## 所有「数值下降」（必须能被解释）
 
@@ -356,6 +357,8 @@
 | MonStats.txt | `skmage_cold6` | ResPo(H) | 110 | **100** |
 | MonStats.txt | `vampire9` | ResCo(H) | 135 | **100** |
 | MonStats.txt | `willowisp8` | ResPo(H) | 115 | **100** |
+| Runes.txt | `Runeword116` | T1Min1 | 5 | **3** |
+| Runes.txt | `Runeword116` | T1Max1 | 5 | **3** |
 | Skills.txt | `Fire Arrow` | mana | 24 | **8** |
 | Skills.txt | `Cold Arrow` | mana | 28 | **12** |
 | Skills.txt | `Fire Mastery` | Param1 | 30 | **24** |
@@ -370,6 +373,8 @@
 
 | 表 | 行 | 列 | 前 | 后 |
 |---|---|---|---|---|
+| Runes.txt | `Runeword116` | T1Code1 | `light` | `aura` |
+| Runes.txt | `Runeword116` | T1Param1 | `` | `Conviction` |
 | Skills.txt | `Multiple Shot` | LevToHit | `` | `10` |
 | Skills.txt | `Strafe` | LevToHit | `` | `10` |
 | Skills.txt | `Fire Mastery` | passivestat2 | `` | `passive_fire_pierce` |
