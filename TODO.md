@@ -146,6 +146,11 @@
       `light +5`（废物属性）换成 **信念 L3（−40%）**
       无降抗职业元素线：craft −20 → 0.88（64%）；**+ 光辉 → 1.23（89%）**
       设计见 [p3-runes-plan.md](docs/p3-runes-plan.md)
+- [x] **「垃圾装备」重做池**（用户名单 + 数据核对）：[docs/p3-junk-list.md](docs/p3-junk-list.md)
+      8 件数据支持 Indeed 弱（Steelpillar 力需 165 / Venomsward 只有毒抗 / Heavenly Garb 对不死 …）
+      5 件**数据不支持**（Guillaume's Face 35CB+15DS、IK 碎石锤 7 条强属性、Natalya's Shadow 3 孔…）→ 别改
+      若干名字在 1.13c 数据里对不上，待确认英文名
+- [ ] **待用户提供：过时符文之语名单**（需附"为什么过时"一句话；我的自动指标已证明不可靠）
 - [ ] **L2 需要重新定义**：P1 改成"总量上升"后，"稀有度从彩票改里程碑"要重写
       （原计划是提高掉率，现在总量已经翻 2~4 倍，可能不需要）
 - [ ] **L4 废技能**：协同改不了，唯一杠杆是 `uniqueitems` 的 oskill 或 cube 配方（P3 允许）
